@@ -173,7 +173,7 @@ pip install sqlparse
 5、percona-toolkit
 5.1unzip SQLAdvisor-master.zip 
 1. yum  install cmake libaio-devel libffi-devel glib2 glib2-devel
-    2. yum   install --enablerepo=Percona56 Percona-Server-shared-56
+2. yum   install --enablerepo=Percona56 Percona-Server-shared-56
 
 编译依赖项sqlparser
 1. cmake -DBUILD_CONFIG=mysql_release -DCMAKE_BUILD_TYPE=debug -DCMAKE_INSTALL_PREFIX=/usr/local/sqlparser ./
@@ -290,9 +290,6 @@ nohup python manage.py celery worker -E -c 10 --loglevel=info -Q default >> defa
 
 
 监控内容目前使用微信企业版本做提醒。
-
-
-
 
 
 /usr/local/bin/uwsgi --ini uwsgi.ini 
