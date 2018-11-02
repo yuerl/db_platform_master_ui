@@ -1,0 +1,207 @@
+{% extends "include/base.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>日志查询</title>
+
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li class="active"><i class="fa fa-table"></i>日志查询</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>日志查询</h2>
+        </div>
+    </div>
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Query Log</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <label class="col-xs-1 control-label">数据库</label>
+                                <div class="col-md-6">
+                                    {% if choosed_host %}
+                                        <select class="form-control col-md-1" name="hosttag">
+                                            <option value="{{ choosed_host }}">{{ choosed_host }}</option>
+                                        </select></br>
+                                        <a href="/log_query/"><input type="button" value="重选数据源" class="btn btn-danger"></a>
+                                    {% else %}
+                                        <select class="form-control col-md-1" name="hosttag">
+                                            {% for obj in objlist %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <label class="col-xs-1 control-label">操作类型</label>
+                                <div class="col-md-6">
+                                    <select class="form-control col-md-1" name="optype">
+                                        {% for obj in optypelist %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                起始时间:{{ form.begin }}
+                                结束时间:{{ form.end }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" class="btn btn-primary">提交查询</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+               <div class="panel-body">
+                        <div class="table-responsive">
+                            {% include "include/pagejump/pagebutton.html" %}
+                            <table id="mytable" class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>USER</th>
+                                    <th>DBTAG</th>
+                                    <th>DBNAME</th>
+                                    <th>SQLTEXT</th>
+                                    <th>CREATE_TIME</th>
+                                    <th>LOGIN_IP</th>
+                                    <th>LOGIN_TIME</th>
+                                    <th>SQLTYPE</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in datalist %}
+                                    <tr>
+                                        <td> {{ item.user }}</td>
+                                        <td> {{ item.dbtag }}</td>
+                                        <td> {{ item.dbname }}</td>
+                                        <td> {{ item.sqltext }}</td>
+                                        <td> {{ item.create_time|date:"Y-m-d H:i:s" }}</td>
+                                        <td> {{ item.ipaddr }}</td>
+                                        <td> {{ item.login_time|date:"Y-m-d H:i:s" }}</td>
+                                        <td>{{ item.sqltype }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+            </div>
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    <script type="text/javascript" src="{% static 'jedate/jedate.js' %}"></script>
+    <script type="text/javascript">
+        jeDate({
+            dateCell: "#id_begin",
+            format: "YYYY-MM-DD hh:mm:ss",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) {
+                alert(val)
+            }
+        })
+        jeDate({
+            dateCell: "#id_end",
+            format: "YYYY-MM-DD hh:mm:ss",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) {
+                alert(val)
+            }
+        })
+
+        function checkstatus() {
+            var tableId = document.getElementById("mytable");
+            var str = "";
+            for (var i = 1; i < tableId.rows.length; i++) {
+                var value = tableId.rows[i].cells[7];
+                if (value.innerText == "executed") {
+                    value.setAttribute("class", "success");
+
+                }
+                else if (value.innerText == "check passed") {
+                    value.setAttribute("class", "warning");
+
+                }
+                else if (value.innerText == "running") {
+                    value.setAttribute("class", "active");
+                }
+                else {
+                    value.setAttribute("class", "danger");
+                }
+                var sched = tableId.rows[i].cells[8];
+                if (sched.innerText == "2199-01-01 00:00") {
+                    sched.innerText = 'NOT SCHEDULED';
+                    sched.setAttribute("class", "danger");
+
+                }
+                else {
+                    sched.setAttribute("class", "active");
+
+                }
+            }
+        }
+
+        function checkbox() {
+            var str = document.getElementsByName("choosedlist");
+            var n = str.length;
+            var k = 0;
+            for (var i = 0; i < n; i++) {
+                if (str[i].checked) {
+                    k = 1;
+                }
+            }
+            if (k == 0) {
+                alert("请勾选TASK!");
+                return false;
+            }
+        }
+
+    </script>
+{% endblock %}

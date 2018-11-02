@@ -1,0 +1,212 @@
+<div class="page-header">
+    <div class="pull-left">
+        <ol class="breadcrumb visible-sm visible-md visible-lg">
+            <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+            <li class="active"><i class="fa fa-laptop"></i>Dashboard</li>
+        </ol>
+    </div>
+    <div class="pull-right">
+        <h2>Dashboard</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel bk-bg-white">
+            <div class="panel-heading bk-bg-primary">
+                <h6><i class="fa fa-random"></i><span class="break"></span>3 Months Task Statistics</h6>
+                <div class="panel-actions">
+                    <a href="charts-flot.html#" class="btn-setting"><i class="fa fa-rotate-right"></i></a>
+                    <a href="charts-flot.html#" class="btn-minimize"><i class="fa fa-chevron-up"></i></a>
+                    <a href="charts-flot.html#" class="btn-close"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="piechart" style="height:300px"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="panel bk-bg-white">
+            <div class="panel-heading bk-bg-primary">
+                <h6><i class="fa fa-random"></i><span class="break"></span>7 Days Task Statistics</h6>
+                <div class="panel-actions">
+                    <a href="charts-flot.html#" class="btn-setting"><i class="fa fa-rotate-right"></i></a>
+                    <a href="charts-flot.html#" class="btn-minimize"><i class="fa fa-chevron-up"></i></a>
+                    <a href="charts-flot.html#" class="btn-close"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div id="donutchart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel bk-bg-white">
+            <div class="panel-heading bk-bg-primary">
+                <h6><i class="fa fa-retweet red"></i>Inception Types Statistics</h6>
+                <div class="panel-actions">
+                    <a href="charts-xcharts.html#" class="btn-setting"><i class="fa fa-rotate-right"></i></a>
+                    <a href="charts-xcharts.html#" class="btn-minimize"><i class="fa fa-chevron-up"></i></a>
+                    <a href="charts-xcharts.html#" class="btn-close"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <figure class="demo" id="chart" style="height: 300px"></figure>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    /* ---------- Pie chart ---------- */
+    {#var data ={{ taskdata|safe }}#}
+    var data =
+    {{ bingtu|safe }}
+    var data_oneday =
+    {{ bingtu_oneday|safe }}
+    {#var data = [#}
+    {#{ label: "Internet Explorer",  data: 12},#}
+    {#{ label: "Mobile",  data: 27},#}
+    {#{ label: "Safari",  data: 85},#}
+    {#{ label: "Opera",  data: 64},#}
+    {#{ label: "Firefox",  data: 90},#}
+    {#{ label: "Chrome",  data: 112},#}
+    {#{ label: "TEST",  data: 10}#}
+    {#];#}
+
+    if ($("#piechart").length) {
+        $.plot($("#piechart"), data,
+            {
+                series: {
+                    pie: {
+                        show: true
+                    }
+                },
+                grid: {
+                    hoverable: true,
+                    clickable: true
+                },
+                legend: {
+                    show: false
+                },
+                colors: ["#FA5833", "#435D78", "#FABB3D", "#78CD51"]
+            });
+
+        function pieHover(event, pos, obj) {
+            if (!obj)
+                return;
+            percent = parseFloat(obj.series.percent).toFixed(2);
+            $("#hover").html('<span style="font-weight: bold; color: ' + obj.series.color + '">' + obj.series.label + ' (' + percent + '%)</span>');
+        }
+
+        $("#piechart").bind("plothover", pieHover);
+        /* ---------- Donut chart ---------- */
+
+        {#if($("#donutchart").length)#}
+        {#{#}
+        {#	$.plot($("#donutchart"),data ,#}
+        {#	{#}
+        {#			series: {#}
+        {#					pie: {#}
+        {#							innerRadius: 0.5,#}
+        {#							show: true#}
+        {#					}#}
+        {#			},#}
+        {#			legend: {#}
+        {#				show: false#}
+        {#			},#}
+        {#			colors: ["#FA5833", "#435D78", "#FABB3D", "#78CD51"]#}
+        {#	});#}
+
+    }
+    (function () {
+        {#var data = [{"xScale":"ordinal","comp":[],"main":[{"className":".main.l1","data":[{"y":15,"x":"2012-11-19T00:00:00"},{"y":11,"x":"2012-11-20T00:00:00"},{"y":8,"x":"2012-11-21T00:00:00"},{"y":10,"x":"2012-11-22T00:00:00"},{"y":1,"x":"2012-11-23T00:00:00"},{"y":6,"x":"2012-11-24T00:00:00"},{"y":8,"x":"2012-11-25T00:00:00"}]},{"className":".main.l2","data":[{"y":29,"x":"2012-11-19T00:00:00"},{"y":33,"x":"2012-11-20T00:00:00"},{"y":13,"x":"2012-11-21T00:00:00"},{"y":16,"x":"2012-11-22T00:00:00"},{"y":7,"x":"2012-11-23T00:00:00"},{"y":18,"x":"2012-11-24T00:00:00"},{"y":8,"x":"2012-11-25T00:00:00"}]}],"type":"line-dotted","yScale":"linear"},{"xScale":"ordinal","comp":[],"main":[{"className":".main.l1","data":[{"y":12,"x":"2012-11-19T00:00:00"},{"y":18,"x":"2012-11-20T00:00:00"},{"y":8,"x":"2012-11-21T00:00:00"},{"y":7,"x":"2012-11-22T00:00:00"},{"y":6,"x":"2012-11-23T00:00:00"},{"y":12,"x":"2012-11-24T00:00:00"},{"y":8,"x":"2012-11-25T00:00:00"}]},{"className":".main.l2","data":[{"y":29,"x":"2012-11-19T00:00:00"},{"y":33,"x":"2012-11-20T00:00:00"},{"y":13,"x":"2012-11-21T00:00:00"},{"y":16,"x":"2012-11-22T00:00:00"},{"y":7,"x":"2012-11-23T00:00:00"},{"y":18,"x":"2012-11-24T00:00:00"},{"y":8,"x":"2012-11-25T00:00:00"}]}],"type":"cumulative","yScale":"linear"},{"xScale":"ordinal","comp":[],"main":[{"className":".main.l1","data":[{"y":12,"x":"2012-11-19T00:00:00"},{"y":18,"x":"2012-11-20T00:00:00"},{"y":8,"x":"2012-11-21T00:00:00"},{"y":7,"x":"2012-11-22T00:00:00"},{"y":6,"x":"2012-11-23T00:00:00"},{"y":12,"x":"2012-11-24T00:00:00"},{"y":8,"x":"2012-11-25T00:00:00"}]},{"className":".main.l2","data":[{"y":29,"x":"2012-11-19T00:00:00"},{"y":33,"x":"2012-11-20T00:00:00"},{"y":13,"x":"2012-11-21T00:00:00"},{"y":16,"x":"2012-11-22T00:00:00"},{"y":7,"x":"2012-11-23T00:00:00"},{"y":18,"x":"2012-11-24T00:00:00"},{"y":8,"x":"2012-11-25T00:00:00"}]}],"type":"bar","yScale":"linear"}];#}
+        var data = [{
+            "xScale": "ordinal",
+            "comp": [],
+            "main": [{"className": ".main.l1", "data":{{ main_incept_data|safe }}}
+                , {"className": ".main.l2", "data":{{ main_incept_db|safe }}}],
+            "type": "line-dotted",
+            "yScale": "linear"
+        },
+            {
+                "xScale": "ordinal",
+                "comp": [],
+                "main": [{"className": ".main.l1", "data":{{ main_incept_data|safe }}},
+                    {"className": ".main.l2", "data":{{ main_incept_db|safe }}}],
+                "type": "cumulative",
+                "yScale": "linear"
+            },
+            {
+                "xScale": "ordinal", "comp": [], "main": [{"className": ".main.l1", "data":{{ main_incept_data|safe }}},
+                    {"className": ".main.l2", "data":{{ main_incept_db|safe }}}], "type": "bar", "yScale": "linear"
+            }];
+        {#var data = [{"xScale":"ordinal","comp":[],"main":[{"className":".main.l1","data":{{ main_incept_data|safe }}}#}
+        {#                                                      ,{"className":".main.l2","data":{{ main_incept_db|safe }}}], "type":"line-dotted","yScale":"linear"}];#}
+        var order = [0, 1, 0, 2],
+            i = 0,
+            xFormat = d3.time.format('%A'),
+            chart = new xChart('line-dotted', data[order[i]], '#chart', {
+                axisPaddingTop: 5,
+                dataFormatX: function (x) {
+                    return new Date(x);
+                },
+                tickFormatX: function (x) {
+                    return xFormat(x);
+                },
+                timing: 1250
+            }),
+            rotateTimer,
+            toggles = d3.selectAll('.multi button'),
+            t = 3500;
+
+        function updateChart(i) {
+            var d = data[i];
+            chart.setData(d);
+            toggles.classed('toggled', function () {
+                return (d3.select(this).attr('data-type') === d.type);
+            });
+            return d;
+        }
+
+        toggles.on('click', function (d, i) {
+            clearTimeout(rotateTimer);
+            updateChart(i);
+        });
+
+        function rotateChart() {
+            i += 1;
+            i = (i >= order.length) ? 0 : i;
+            var d = updateChart(order[i]);
+            rotateTimer = setTimeout(rotateChart, t);
+        }
+
+        rotateTimer = setTimeout(rotateChart, t);
+    }());
+
+</script>
+<script type="text/javascript">
+    /* ---------- Pie chart ---------- */
+    {#var data ={{ taskdata|safe }}#}
+    var data =
+    {{ bingtu_oneday|safe }}
+    /* ---------- Donut chart ---------- */
+
+    if ($("#donutchart").length) {
+        $.plot($("#donutchart"), data,
+            {
+                series: {
+                    pie: {
+                        innerRadius: 0.5,
+                        show: true
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                colors: ["#FA5833", "#435D78", "#FABB3D", "#78CD51"]
+            });
+    }
+
+</script>

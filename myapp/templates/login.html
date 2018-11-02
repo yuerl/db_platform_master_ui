@@ -1,0 +1,96 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title >Login</title>
+{% endblock %}
+{%block content%}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form role="form" action="" method="post">
+                {% csrf_token %}
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">登录页面</h4>
+                    </div>
+                    <div class="modal-body">
+                        {% if password_is_wrong %}
+                            <div class="alert alert-error">
+                                <p style="color: red;">错误! 用户名或密码错误</p>
+                            </div>
+                        {% endif %}
+                        <div class="form-group">
+                            <table>
+                                {{ form }}
+
+                                {#                    <tr>#}
+                                {#                        <td>{{ form.username.label }}     </td>#}
+                                {#                        <td>{{ form.username }}</td>#}
+                                {#                        </br>#}
+                                {#                    </tr>#}
+                                {##}
+                                {#                    <tr>#}
+                                {#                        <td> {{ form.password.label }} </br>  </td>#}
+                                {##}
+                                {#                        <td>{{ form.password }} </br>   </td>#}
+                                {#                    </tr>#}
+{#                                <tr>#}
+{#                                    <td><strong>{{ myform.mycaptcha.label }}</strong> </td>#}
+{##}
+{#                                    <td>{{ myform.mycaptcha }}  </td>#}
+{##}
+{#                                </tr>#}
+                            </table>
+
+                            {% ifequal error 1 %}
+                                错误登录次数过多，请稍后重试
+                            {% endifequal %}
+                            {% ifequal chaerror 1 %}
+                                验证码错误
+                            {% endifequal %}
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div class="col-md-2">
+{#                                btn btn-primary#}
+                                <input type="submit" value="登录" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                {#                <input type="button" onclick="return confirm('请联系DBA')" value="忘记密码" class="btn btn-danger">#}
+                                <a href="/passforget/pass_rec/"><input type="button" value="忘记密码" class="bk-margin-5 btn btn-warning"></a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+    </div>
+
+    <script>
+        $(function () { $('#myModal').modal({
+            keyboard: false,
+            show: true,
+            backdrop:false
+        }).css({
+            "margin-top": 150
+        })
+        });
+
+
+    </script>
+
+    <script type="text/javascript">
+        $('.captcha').click(function(){ //点击图片刷新
+            var tmp = Math.random().toString();
+            $.get("?newsn=1&tmp="+tmp, function(result){
+                $('.captcha').attr("src", result);
+                $('#id_captcha_0').attr("value", result.split('/')[3]);
+            });
+            return false;
+        });
+    </script>
+
+{% endblock %}

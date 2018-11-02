@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "mysql_gather.py", line 13, in <module>
+    from myapp.include import function as func
+ImportError: No module named myapp.include

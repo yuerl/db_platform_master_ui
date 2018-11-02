@@ -1,0 +1,187 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>MySQL_EXEC(直接执行)</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-file-text"></i>MySQL</a></li>
+                <li class="active"><i class="fa fa-arrows"></i>MySQL_EXEC(直接执行)</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>MySQL_EXEC(直接执行)</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>MySQL EXECUTE</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">选择数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host %}
+                                    <select class="form-control col-md-1" name="cx">
+                                        {% for obj in objlist %}
+                                            {% if obj == choosed_host %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select></br>
+                                    <a href="/mysql_exec/"><input type="button" value="刷新数据源"
+                                                                  class="btn btn-danger"></a>
+                                {% else %}
+                                    <select class="form-control col-md-1" name="cx">
+                                        {% for obj in objlist %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">库名</label>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        {% if db_se %}
+                                            <input type=="text" class="form-control" maxlength="30"
+                                                   placeholder="input dbname for search" value="{{ db_se }}"
+                                                   name="searchdbname">
+                                        {% else %}
+                                            <input type=="text" class="form-control" maxlength="30"
+                                                   placeholder="input dbname for search" name="searchdbname">
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" name='searchdb' class="bk-margin-5 btn btn-primary"
+                                                value="1">搜索库
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="form-group">
+                            {#                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">SQL To Run</label>#}
+                            <div class="col-lg-10 col-md-10">
+                                {{ form.a }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name="check" class="btn btn-danger">inception检查语句</button>
+                                <button type="submit" name="commit" onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-primary">非inception执行
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+               <div class="panel-body">
+                            <div class="table-responsive">
+                                {% if collist %}
+                                    <table class="table table-bordered table-striped table-condensed table-hover">
+                                        <tr >
+                                            <td>
+                                                {{ dbname }}
+                                            </td>
+                                        </tr>
+                                        {% if sql %}
+                                            <tr>
+                                                <td>
+                                                    {#                                {{ a|linebreaks }}#}
+                                                    {{ sql|truncatechars:100|linebreaks }}
+
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    </table>
+                                    {% include "include/pagejump/pagebutton.html" %}
+                                {% endif %}
+                                <table id="mytable" class="table table-bordered table-striped table-condensed table-hover">
+                                    <thead>
+                                    <tr >
+                                        {% for colname in collist %}
+                                            <th>{{ colname }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in data_mysql %}
+                                        <tr>
+                                            {% for item_detail in item %}
+                                                <td> {{ item_detail }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    <script>
+
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+        function record_cookie() {
+            var fav = document.getElementById("id_favword");
+            myfav = escape(fav.value);
+            {#            myfav = fav.value.replace(/\n/g,"^");#}
+            var expires = new Date();
+            expires.setTime(expires.getTime() + 3500000);
+            pathstr = ';path=/';
+            {#            alert(myfav);#}
+            document.cookie = "myfavword" + "=" + myfav + pathstr + ';expires=' + expires.toGMTString();
+        }
+
+        function showfav() {
+            var fav = document.getElementById("id_favword");
+            myfav = unescape(fav.value);
+            fav.value = myfav;
+        }
+    </script>
+{% endblock %}

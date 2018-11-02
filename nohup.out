@@ -1,0 +1,40 @@
+[2018-10-10 16:03:58,681: INFO/MainProcess] Received task: myapp.include.scheduled.task_failed_wechart[17a0e294-8669-4843-80c6-75392753a1f1]
+[2018-10-10 16:03:59,117: INFO/MainProcess] Task myapp.include.scheduled.task_failed_wechart[17a0e294-8669-4843-80c6-75392753a1f1] succeeded in 0.432781481999s: None
+
+worker: Warm shutdown (MainProcess)
+ 
+ -------------- celery@mysql_inception v3.1.25 (Cipater)
+---- **** ----- 
+--- * ***  * -- Linux-2.6.32-358.el6.x86_64-x86_64-with-centos-6.4-Final
+-- * - **** --- 
+- ** ---------- [config]
+- ** ---------- .> app:         default:0x7f4eafd187d0 (djcelery.loaders.DjangoLoader)
+- ** ---------- .> transport:   redis://192.168.188.211:6379/0
+- ** ---------- .> results:     
+- *** --- * --- .> concurrency: 5 (prefork)
+-- ******* ---- 
+--- ***** ----- [queues]
+ -------------- .> warning          exchange=task_fail(direct) key=task_fail
+                
+
+[tasks]
+  . myapp.include.mon.check_mysql_host
+  . myapp.include.mon.mon_mysql
+  . myapp.include.mon.sendmail_monitor
+  . myapp.include.scheduled.ck_range_part
+  . myapp.include.scheduled.gather_mysql_info
+  . myapp.include.scheduled.gather_mysql_info_h
+  . myapp.include.scheduled.gather_slowsql
+  . myapp.include.scheduled.get_dupreport
+  . myapp.include.scheduled.get_dupreport_all
+  . myapp.include.scheduled.mysql_db_diff
+  . myapp.include.scheduled.table_check
+  . myapp.include.scheduled.table_use_dailyreport
+  . myapp.include.scheduled.task_failed_wechart
+  . myapp.include.scheduled.task_sche_run
+  . myapp.tasks.parse_binlog
+  . myapp.tasks.process_runtask
+  . myapp.tasks.sendmail_forget
+  . myapp.tasks.sendmail_sqlparse
+  . myapp.tasks.sendmail_task
+

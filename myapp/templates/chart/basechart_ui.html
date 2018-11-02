@@ -1,0 +1,103 @@
+<div class="page-header">
+	<div class="pull-left">
+							<ol class="breadcrumb visible-sm visible-md visible-lg">
+								<li><a href="{% url 'index'%}"><i class="icon fa fa-home"></i>Home</a></li>
+								<li class="active"><i class="fa fa-laptop"></i>Dashboard</li>
+							</ol>
+						</div>
+	<div class="pull-right">
+							<h2>Dashboard</h2>
+						</div>
+</div>
+<div class="row">
+<div class="col-sm-6">
+							<div class="panel bk-bg-white">
+								<div class="panel-heading bk-bg-primary">
+									<h6><i class="fa fa-random"></i><span class="break"></span>Pie</h6>
+									<div class="panel-actions">
+										<a href="charts-flot.html#" class="btn-setting"><i class="fa fa-rotate-right"></i></a>
+										<a href="charts-flot.html#" class="btn-minimize"><i class="fa fa-chevron-up"></i></a>
+										<a href="charts-flot.html#" class="btn-close"><i class="fa fa-times"></i></a>
+									</div>
+								</div>
+								<div class="panel-body">
+									<div id="piechart" style="height:300px"></div>
+								</div>
+							</div>
+						</div>
+<div class="col-sm-6">
+							<div class="panel bk-bg-white">
+								<div class="panel-heading bk-bg-primary">
+									<h6><i class="fa fa-random"></i><span class="break"></span>Donut</h6>
+									<div class="panel-actions">
+										<a href="charts-flot.html#" class="btn-setting"><i class="fa fa-rotate-right"></i></a>
+										<a href="charts-flot.html#" class="btn-minimize"><i class="fa fa-chevron-up"></i></a>
+										<a href="charts-flot.html#" class="btn-close"><i class="fa fa-times"></i></a>
+									</div>
+								</div>
+								<div class="panel-body">
+									 <div id="donutchart" style="height: 300px;"></div>
+								</div>
+							</div>
+						</div>
+</div>
+<script type="text/javascript">
+/* ---------- Pie chart ---------- */
+
+	var data = [
+	{ label: "Internet Explorer",  data: 12},
+	{ label: "Mobile",  data: 27},
+	{ label: "Safari",  data: 85},
+	{ label: "Opera",  data: 64},
+	{ label: "Firefox",  data: 90},
+	{ label: "Chrome",  data: 112}
+	];
+
+	if($("#piechart").length)
+	{
+		$.plot($("#piechart"), data,
+		{
+			series: {
+					pie: {
+							show: true
+					}
+			},
+			grid: {
+					hoverable: true,
+					clickable: true
+			},
+			legend: {
+				show: false
+			},
+			colors: ["#FA5833", "#435D78", "#FABB3D", "#78CD51"]
+		});
+
+		function pieHover(event, pos, obj)
+		{
+			if (!obj)
+					return;
+			percent = parseFloat(obj.series.percent).toFixed(2);
+			$("#hover").html('<span style="font-weight: bold; color: '+obj.series.color+'">'+obj.series.label+' ('+percent+'%)</span>');
+		}
+		$("#piechart").bind("plothover", pieHover);
+	}
+/* ---------- Donut chart ---------- */
+
+	if($("#donutchart").length)
+	{
+		$.plot($("#donutchart"), data,
+		{
+				series: {
+						pie: {
+								innerRadius: 0.5,
+								show: true
+						}
+				},
+				legend: {
+					show: false
+				},
+				colors: ["#FA5833", "#435D78", "#FABB3D", "#78CD51"]
+		});
+	}
+
+</script>

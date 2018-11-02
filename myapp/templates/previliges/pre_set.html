@@ -1,0 +1,273 @@
+{% extends "include/base.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>用户权限设置</title>
+
+{% endblock %}
+{% block content %}
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+               <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-briefcase"></i>权限管理</a></li>
+                <li class="active"><i class="fa fa-list"></i>用户权限设置</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>用户权限设置</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>User Privilege Management</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        {% csrf_token %}
+                        <div class="form-group">
+
+                            <label class="col-xs-1 control-label">选择用户名</label>
+                            <div class="col-md-6">
+                                <select class="form-control col-md-1" name="account">
+                                    {% for obj in userlist %}
+                                        {% if obj.username == username %}
+                                            <option selected="selected"
+                                                    value="{{ obj.username }}">{{ obj.username }}</option>
+                                        {% else %}
+                                            <option value="{{ obj.username }}">{{ obj.username }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='query' class="btn btn-primary">查询</button>
+                                <button type="submit" name='set' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-danger">设置权限
+                                </button>
+                                <button type="submit" name='reset' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-success">用户权限清空
+                                </button>
+                                <button type="submit" name='delete' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-default">删除用户
+                                </button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <div class="row">
+                                    {% if mail %}
+                                        <input type=="text" class="form-control" maxlength="60" value="{{ mail }}"
+                                               placeholder="input email here" name="newmail">
+                                    {% else %}
+                                        <input type=="text" class="form-control" maxlength="60"
+                                               placeholder="input email here" name="newmail">
+                                    {% endif %}
+                                    {% if username %}
+                                        <input type=="text" class="form-control" maxlength="30"
+                                               value="{{ username }}" placeholder="input username here"
+                                               name="newname">
+                                    {% else %}
+                                        <input type=="text" class="form-control" maxlength="30"
+                                               placeholder="input username here" name="newname">
+                                    {% endif %}
+                                    <input type=="text" class="form-control" maxlength="20"
+                                           placeholder="input password here" name="newpasswd">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='create' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-info">创建账号
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>CHOOSE USERGROUP FOR USER</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <div class="row">{% if usergroup %}
+                                <select class="form-control col-md-1" multiple="multiple" size=10 name="user_group">
+                                    {% for obj in usergroup %}
+                                        {% if obj in usergp %}
+                                            <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                        {% else %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% endif %}</div>
+                        </div>
+                    </div>
+                </div>
+              <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>CHOOSE DBGROUP FOR USER </h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+
+                            <div class="row">
+                                <table id="mytable"
+                                       class="table table-bordered table-striped table-condensed table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>GROUP_NAME</th>
+                                        <th>DBLIST</th>
+                                        <th>USERACCOUNT</th>
+                                        <th>勾选GROUP</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in grouplist %}
+                                        <tr>
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.groupname }}</td>
+                                            <td>
+                                                {% for i in item.dbname.all %}
+                                                    {% if forloop.counter < 9 %}
+                                                        {{ i.dbtag }}  + {{ i.dbname }} </br>
+                                                    {% elif forloop.counter == 9 %}
+                                                        ...
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% for i in item.account.all %}
+                                                    {% if forloop.counter < 9 %}
+                                                        {{ i.username }} </br>
+                                                    {% elif forloop.counter == 9 %}
+                                                        ...
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                            {% if item in dbgp %}
+                                                <td><input type="checkbox" checked="1" size="100" name="choosedlist"
+                                                           value={{ item.id }}></td>
+                                            {% else %}
+                                                <td><input type="checkbox" size="100" name="choosedlist"
+                                                           value={{ item.id }}></td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>CHOOSE DB FOR USER (optional)</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <div class="row">
+                                {% if dblist %}
+                                    <select class="form-control col-md-1" multiple="multiple" size=10
+                                            name="user_dblist">
+                                        {% for obj in dblist %}
+                                            {% if obj in userdblist %}
+                                                <option selected="selected"
+                                                        value="{{ obj.dbtag }}">{{ obj.dbtag }}</option>
+                                            {% else %}
+                                                <option value="{{ obj.dbtag }}">{{ obj.dbtag }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{#{% block script %}#}
+{#    {% include "include/pagejump/pagejump.html" %}#}
+{#    <script type="text/javascript" src="{% static 'jedate/jedate.js' %}"></script>#}
+{#    <script type="text/javascript">#}
+{#        //jeDate.skin('gray');#}
+{#        jeDate({#}
+{#            dateCell: "#id_begin",#}
+{#            format: "YYYY-MM-DD hh:mm:ss",#}
+{#            isinitVal: true,#}
+{#            isTime: true, //isClear:false,#}
+{#            minDate: "2014-09-19 00:00:00",#}
+{#            okfun: function (val) {#}
+{#                alert(val)#}
+{#            }#}
+{#        })#}
+{#    </script>#}
+{#    <script language="javascript">#}
+{#        function getProinfo(node) {#}
+{#            var tr1 = node.parentNode;#}
+{#            document.getElementById("host_id").value = tr1.cells[0].innerHTML.trim();#}
+{#            document.getElementById("host_ip").value = tr1.cells[1].innerHTML.trim();#}
+{#            document.getElementById("host_ip").setAttribute("readOnly", true);#}
+{#            document.getElementById('host_port').value = tr1.cells[2].innerHTML.trim();#}
+            {#document.getElementById('status_mgr').value=tr1.cells[4].innerHTML;#}
+{#            document.getElementById('host_user').value = tr1.cells[3].innerHTML.trim();#}
+{#            document.getElementById('host_pwd').value = tr1.cells[4].innerHTML.trim();#}
+{##}
+{#            var select = document.getElementById('host_status');#}
+{#            for (var i = 0, count = select.options.length; i < count; i++) {#}
+{##}
+{#                if (select.options[i].text == tr1.cells[5].innerHTML.trim()) {#}
+{##}
+{#                    select.selectedIndex = i;#}
+{##}
+{#                    break;#}
+{##}
+{#                }#}
+{#            }#}
+{#            document.getElementById('id_begin').value = tr1.cells[6].innerHTML.trim();#}
+{#        }#}
+{#    </script>#}
+{##}
+{#{% endblock %}#}

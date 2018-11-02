@@ -1,0 +1,228 @@
+{% extends "include/base.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>监控主机维护</title>
+
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="icon fa fa-signal"></i>DB管理</a></li>
+				<li class="active"><i class="fa fa-bar-chart-o"></i>监控主机维护</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>监控主机维护</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Monitor Host Management</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+
+                            <label class="col-xs-1 control-label">IP地址</label>
+                            <div class="col-md-6">
+                                {% if ip_searched %}
+                                    <input type=="text" class="form-control" maxlength="60" placeholder="填入IP地址"
+                                           value="{{ ip_searched }}" name="ip_searched">
+                                {% else %}
+                                    <input type=="text" class="form-control" maxlength="60" placeholder="填入IP地址"
+                                           name="ip_searched">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name="query" class="btn btn-primary" value="1">查询</button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <div class="row">
+                                     {% csrf_token %}
+                                    <input type="hidden" name="host_id" id="host_id">
+                                    <label class="col-md-1 control-label">IP地址</label>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        <input type=="text" class="form-control" maxlength="60" placeholder="填入IP地址"
+                                               name="host_ip" id="host_ip">
+                                    </div>
+                                    <label class="col-md-1 control-label">端口号</label>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        <input type=="text" class="form-control" maxlength="60" placeholder="填入端口号"
+                                               name="host_port" id="host_port">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <div class="row">
+                                    <label class="col-md-1 control-label">启用状态</label>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        <select class="form-control col-md-3" name="host_status" id="host_status">
+                                            <option value="unused">unused</option>
+                                            <option value="using">using</option>
+                                            <option value="stop">stop</option>
+                                        </select>
+                                    </div>
+                                    <label class="col-md-1 control-label">操作时间</label>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        {{ form.begin }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <div class="row">
+                                    <label class="col-md-1 control-label">用户名</label>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        <input type=="text" class="form-control" maxlength="60" placeholder="填入用户名"
+                                               name="host_user" id="host_user">
+                                    </div>
+                                    <label class="col-md-1 control-label">密码</label>
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                        <input type=="text" class="form-control" maxlength="120" placeholder="填入用户名"
+                                               name="host_pwd" id="host_pwd">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+
+                                <button type="submit" name='create_host' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-info">创建
+                                </button>
+                                <button type="submit" name='modify_host' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-primary">修改
+                                </button>
+                                <button type="submit" name='delete_host' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-primary">删除
+                                </button>
+                                <span style="color:red">{{ info }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            {% include "include/pagejump/pagebutton.html" %}
+                            {#                            {% if datalist %}#}
+                            {#                                {% include "include/pagejump/pagebutton.html" %}#}
+                            {#                            {% endif %}#}
+                            {% if datalist %}
+                            <table id="mytable" class="table table-bordered table-striped table-condensed table-hover">
+                                <thead>
+                                <tr >
+                                    <th>编号</th>
+                                    <th>IP地址</th>
+                                    <th>端口</th>
+                                    <th>用户名</th>
+                                    <th>密码</th>
+                                    <th>启用状态</th>
+                                    <th>操作时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in datalist %}
+                                    <tr>
+                                        <td> {{ item.id }}</td>
+                                        <td onclick="getProinfo(this)"> {{ item.hosts_ip }}</td>
+                                        <td> {{ item.host_port }}</td>
+                                        <td> {{ item.host_user }}</td>
+                                        <td> {{ item.host_pwd }}</td>
+                                        <td> {{ item.host_status }}</td>
+                                        <td> {{ item.dtime|date:"Y-m-d H:i:s" }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    <script type="text/javascript" src="{% static 'jedate/jedate.js' %}"></script>
+    <script type="text/javascript">
+        //jeDate.skin('gray');
+        jeDate({
+            dateCell: "#id_begin",
+            format: "YYYY-MM-DD hh:mm:ss",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) {
+                alert(val)
+            }
+        })
+    </script>
+    <script language="javascript">
+        function getProinfo(node) {
+            var tr1 = node.parentNode;
+            document.getElementById("host_id").value = tr1.cells[0].innerHTML.trim();
+            document.getElementById("host_ip").value = tr1.cells[1].innerHTML.trim();
+            document.getElementById("host_ip").setAttribute("readOnly", true);
+            document.getElementById('host_port').value = tr1.cells[2].innerHTML.trim();
+            {#document.getElementById('status_mgr').value=tr1.cells[4].innerHTML;#}
+            document.getElementById('host_user').value = tr1.cells[3].innerHTML.trim();
+            document.getElementById('host_pwd').value = tr1.cells[4].innerHTML.trim();
+
+            var select = document.getElementById('host_status');
+            for (var i = 0, count = select.options.length; i < count; i++) {
+
+                if (select.options[i].text == tr1.cells[5].innerHTML.trim()) {
+
+                    select.selectedIndex = i;
+
+                    break;
+
+                }
+            }
+            document.getElementById('id_begin').value = tr1.cells[6].innerHTML.trim();
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% load staticfiles %}
+<nav class="navbar" role="navigation">
+    <div class="container-fluid container-nav">
+        <!-- Navbar Action -->
+        <ul class="nav navbar-nav navbar-actions navbar-left">
+            <li class="visible-md visible-lg"><a href="{% url 'index' %}" id="main-menu-toggle"><i
+                    class="fa fa-th-large"></i></a></li>
+            <li class="visible-xs visible-sm"><a href="{% url 'index' %}" id="sidebar-menu"><i
+                    class="fa fa-navicon"></i></a></li>
+        </ul>
+        <!-- Navbar Left -->
+        				<div class="navbar-brand">
+        					<!-- Search Form -->
+        					<form class="form-group">
+        						<div class="text-center">
+{#                                    QQ群:572929520#}
+{#                                    微信:njyuerl#}
+        						</div>
+        					</form>
+        				</div>
+        <!-- Navbar Right -->
+        <div class="navbar-right">
+            <!-- Notifications -->
+            {#					<ul class="notifications hidden-sm hidden-xs">#}
+            {#						<li>#}
+            {#							<a href="#" class="dropdown-toggle notification-icon" data-toggle="dropdown">#}
+            {#								<i class="fa fa-tasks"></i>#}
+            {#								<span class="badge">10</span>#}
+            {#							</a>#}
+            {#							<ul class="dropdown-menu update-menu" role="menu">#}
+            {#								<li><a href="#"><i class="fa fa-database bk-fg-primary"></i> Database </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-bar-chart-o bk-fg-primary"></i> Connection </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-bell bk-fg-primary"></i> Notification </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-envelope bk-fg-primary"></i> Message </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-flash bk-fg-primary"></i> Traffic </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-credit-card bk-fg-primary"></i> Invoices </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-dollar bk-fg-primary"></i> Finances </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-thumbs-o-up bk-fg-primary"></i> Orders </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-folder bk-fg-primary"></i> Directories </a></li>#}
+            {#								<li><a href="#"><i class="fa fa-users bk-fg-primary"></i> Users </a></li>#}
+            {#							</ul>#}
+            {#						</li>#}
+            {#						<li>#}
+            {#							<a href="#" class="dropdown-toggle notification-icon" data-toggle="dropdown">#}
+            {#								<i class="fa fa-envelope"></i>#}
+            {#								<span class="badge">5</span>#}
+            {#							</a>#}
+            {#							<ul class="dropdown-menu">#}
+            {#								<li class="dropdown-menu-header">#}
+            {#									<strong>Messages</strong>#}
+            {#									<div class="progress progress-xs  progress-striped active">#}
+            {#										<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">#}
+            {#											60%#}
+            {#										</div>#}
+            {#									</div>#}
+            {#								</li>#}
+            {#								<li class="avatar">#}
+            {#									<a href="page-inbox.html">#}
+            {#										<img class="avatar" src="{% static 'assets/img/avatar1.jpg' %}" alt="" />#}
+            {#										<div><div class="point point-primary point-lg"></div>New message</div>#}
+            {#										<span><small>1 minute ago</small></span>#}
+            {#									</a>#}
+            {#								</li>#}
+            {#								<li class="avatar">#}
+            {#									<a href="page-inbox.html">#}
+            {#										<img class="avatar" src="{% static 'assets/img/avatar2.jpg' %}" alt="" />#}
+            {#										<div><div class="point point-primary point-lg"></div>New message</div>#}
+            {#										<span><small>3 minute ago</small></span>#}
+            {#									</a>#}
+            {#								</li>#}
+            {#								<li class="avatar">#}
+            {#									<a href="page-inbox.html">#}
+            {#										<img class="avatar" src="{% static 'assets/img/avatar3.jpg' %}" alt="" />#}
+            {#										<div><div class="point point-primary point-lg"></div>New message</div>#}
+            {#										<span><small>4 minute ago</small></span>#}
+            {#									</a>#}
+            {#								</li>#}
+            {#								<li class="avatar">#}
+            {#									<a href="page-inbox.html">#}
+            {#										<img class="avatar" src="{% static 'assets/img/avatar4.jpg' %}" alt="" />#}
+            {#										<div><div class="point point-primary point-lg"></div>New message</div>#}
+            {#										<span><small>30 minute ago</small></span>#}
+            {#									</a>#}
+            {#								</li>#}
+            {#								<li class="avatar">#}
+            {#									<a href="page-inbox.html">#}
+            {#										<img class="avatar" src="{% static 'assets/img/avatar5.jpg' %}" alt="" />#}
+            {#										<div><div class="point point-primary point-lg"></div>New message</div>#}
+            {#										<span><small>1 hours ago</small></span>#}
+            {#									</a>#}
+            {#								</li>#}
+            {#								<li class="dropdown-menu-footer text-center">#}
+            {#									<a href="page-inbox.html">View all messages</a>#}
+            {#								</li>#}
+            {#							</ul>#}
+            {#						</li>#}
+            {#                     <li><a href="#"  class="dropdown-toggle" data-toggle="dropdown">WELCOME: {{ request.user.username }} </a></li>#}
+            {#                    <li><a href="{% url 'pass_reset' %}"  class="dropdown-toggle" data-toggle="dropdown">重置密码</a></li>#}
+            {#                    <li><a href="{% url 'logout' %}"  class="dropdown-toggle" data-toggle="dropdown">LOGOUT</a></li>#}
+            {#					</ul>#}
+            <!-- End Notifications -->
+            <!-- Userbox -->
+            <div class="userbox">
+                {% if request.user.is_authenticated %}
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <div class="profile-info">
+                            <span class="name">WELCOME:{{ request.user.username }}</span>
+                        </div>
+                        <i class="fa custom-caret"></i>
+                    </a>
+                    <div class="dropdown-menu">
+                        <ul class="list-unstyled">
+                            <li class="dropdown-menu-header bk-bg-white bk-margin-top-15">
+                                <div class="progress progress-xs  progress-striped active">
+                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="60"
+                                         aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+                                        60%
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="{% url 'pass_reset' %}"><i class="fa fa-file"></i> 重置密码</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'logout' %}"><i class="fa fa-power-off"></i> Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{% url 'login' %}">PLEASE LOGIN</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+            <!-- End Userbox -->
+        </div>
+        <!-- End Navbar Right -->
+    </div>
+</nav>

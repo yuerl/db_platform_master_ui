@@ -1,0 +1,267 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>DML&DDL语句执行(权限审核)</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-file-text"></i>MySQL</a></li>
+                <li class="active"><i class="fa fa-bank"></i>DML&DDL语句执行(权限审核)</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>DML&DDL语句执行(权限审核)</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Inception DDL&DML Search</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">选择数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host %}
+                                    <select class="form-control col-md-1" name="cx">
+                                        {% for obj in objlist %}
+                                            {% if obj == choosed_host %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select></br>
+                                    <a href="/sqlcheck/"><input type="button" value="刷新数据源" class="btn btn-danger"></a>
+
+                                {% else %}
+                                    <select class="form-control col-md-1" name="cx">
+                                        {% for obj in objlist %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">库名</label>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        {% if db_se %}
+                                            <input type=="text" class="form-control" maxlength="30"
+                                                   placeholder="input dbname for search" value="{{ db_se }}"
+                                                   name="searchdbname">
+                                        {% else %}
+                                            <input type=="text" class="form-control" maxlength="30"
+                                                   placeholder="input dbname for search" name="searchdbname">
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" name='searchdb' class="btn btn-info" value="1">搜索库
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+
+                            <div class="col-lg-10 col-md-10">
+                                {% if specification_val %}
+                                    <input type=="text" maxlength="100" class="form-control"
+                                           placeholder="执行说明，可选，最多100字"
+                                           name="specification" value={{ specification_val }}>
+                                {% else %}
+                                    <input type=="text" maxlength="100" class="form-control"
+                                           placeholder="执行说明，可选，最多100字"
+                                           name="specification">
+                                {% endif %}
+                                <span style="color:red"> 【提交任务】请选择是【否需要备份】</span>
+                                <select class="form-control" name="ifbackup">
+                                    {% if needbackup %}
+                                        {% if needbackup == 1 %}
+                                            <option value=1 selected="selected">需要备份</option>
+                                            <option value=0>不需要备份</option>
+                                        {% elif  needbackup == 0 %}
+                                            <option value=1>需要备份</option>
+                                            <option value=0 selected="selected">不需要备份</option>
+                                        {% endif %}
+                                    {% else %}
+                                        <option value=1 selected="selected">需要备份</option>
+                                        <option value=0>不需要备份</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {#                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">SQL To Run</label>#}
+                            <div class="col-lg-10 col-md-10">
+                                {{ form.a }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='check' class="btn btn-primary">inception检查</button>
+                                <!--<button type="submit" name='upload' class="btn btn-warning">脚本上传</button >-->
+                                <button type="submit" name='addtask' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-danger">提交待审任务
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+
+                            {% if split %}
+                                <strong> <span style="color:red">请根据审核提示，拆分任务提交 </br> </span></strong>
+                                </br>
+                            {% endif %}
+                            {% include "include/pagejump/pagebutton.html" %}
+                            {% if collist %}
+
+                            {% endif %}
+                            <span style="color:red"> {{ status }}</span>
+                            <table id="mytable" class="table table-bordered table-striped table-condensed table-hover">
+                                <thead>
+                                <tr>
+                                    {% for colname in collist %}
+                                        {% if forloop.counter <= 7 %}
+                                            <th>{{ colname }}</th>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in data_list %}
+                                    <tr>
+                                        {% for item_detail in item %}
+                                            {% if forloop.counter <= 7 %}
+                                                {% if forloop.counter == 6 %}
+                                                    <td> {{ item_detail|truncatechars:250|linebreaks }}</td>
+                                                {% elif forloop.counter == 5 or forloop.counter == 2 %}
+                                                    <td> {{ item_detail|linebreaks }}</td>
+                                                {% elif forloop.counter == 3 %}
+                                                    {% if item_detail == 0 %}
+                                                        <td> {{ item_detail }}</td>
+                                                    {% else %}
+                                                        <td><span
+                                                                style="color:red;font-weight:bold">{{ item_detail }}</span>
+                                                        </td>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <td> {{ item_detail }}</td>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    <script>
+        $(document).ready(function () {
+            $('#myModal').modal({
+                keyboard: false,
+                show: false,
+                backdrop: false
+            })
+            $(document).on("click", '.backup_sql', function () {
+                {#            $('.backup_sql').on('click',function() {#}
+                var sequenceid = $(this).attr("value");
+                {#                alert(sequenceid);#}
+                $.get("{% url 'get_single_rollback' %}", {'sequenceid': sequenceid}).done(function (data) {
+                    $('#myModal').modal({
+                        show: true
+                    });
+                    $("#myTb").empty("");
+                    var tbHead = " <thead><tr><th width=\"50\">ID</th><th>SQL</th></tr></thead><tbody>";
+                    $("#myTb").append(tbHead);
+                    for (var i = 0; i <= data.length - 1; i++) {
+                        var tbBody = ""
+                        tbBody += "<tr><td width=\"30\">" + (i + 1) + "</td><td style=\"word-wrap:break-word;\">" + data[i] + "</td></tr>";
+                        $("#myTb").append(tbBody);
+
+                        {#                        $('#list_result').append(' ' + data[i]);#}
+                    }
+                    ;
+                    $("#myTb").append("</tbody>");
+                    $('#myTb').dataTable().fnDestroy();
+                    $('#myTb').DataTable({
+                        "lengthMenu": [[5, 10], [5, 10]],
+                        "order": []
+                    });
+
+                });
+            });
+
+            $('.backup_info').click(function () {
+                var taskid = $(this).attr("value");
+                $.get("{% url 'get_rollback' %}", {'taskid': taskid}).done(function (data) {
+                    $('#myModal').modal({
+                        show: true
+                    });
+                    $("#myTb").empty("");
+                    var tbHead = " <thead><tr><th width=\"30\">ID</th><th>SQL</th></tr></thead><tbody>";
+                    $("#myTb").append(tbHead);
+                    for (var i = 0; i <= data.length - 1; i++) {
+                        var tbBody = ""
+                        tbBody += "<tr><td width=\"30\">" + (i + 1) + "</td><td style=\"word-wrap:break-word;\">" + data[i] + "</td></tr>";
+                        $("#myTb").append(tbBody);
+
+                        {#                        $('#list_result').append(' ' + data[i]);#}
+                    }
+                    ;
+                    $("#myTb").append("</tbody>");
+                    $('#myTb').dataTable().fnDestroy();
+                    $('#myTb').DataTable({
+                        "lengthMenu": [[5, 10], [5, 10]],
+                        "order": []
+                    });
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,402 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>SQL审核执行</title>
+{% endblock %}
+{% block name %}
+    欢迎使用MySQL数据库<span style="color:red">SQL审核执行</span>功能
+{% endblock %}
+{% block content %}
+    <table>
+        <tr>
+            <td>
+                </br>
+                </br>
+                <form role="form" method='post' enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <table>
+                        <tr>
+                            <td> 选择数据库 :</td>
+                            <td>{% if choosed_host %}
+                                {#                        <select class="form-control col-md-1" name = "cx">#}
+                                {#                            <option value ="{{ choosed_host }}">{{ choosed_host }}</option>#}
+                                {#                        </select></br>#}
+                                {#                        <a href="/sqlcheck/"><input type="button" value="重选数据源" class="btn btn-danger"></a>#}
+
+                                <select class="form-control col-md-1" name="dbhost">
+
+                                    {% for obj in  objlist %}
+                                        {% if obj == choosed_host %}
+                                            <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                        {% else %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select></br>
+                            {% else %}
+                                <select class="form-control col-md-1" name="dbhost">
+                                    {% for obj in objlist %}
+                                        <option value="{{ obj }}">{{ obj }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}</td>
+                        <td>
+                               <div class="col-md-12">
+
+                                    <h3>查询注意事项:</h3>
+                                    <p class="bg-danger"> 1. 支持多条DML语句一起审核</p>
+                                    <p class="bg-info"> 2. 点击"检查语句"后，如果返回的结果中"errlevel"都为0,则语句没问题,不然请查看"errormessage"中的提示</p>
+                                    <p class="bg-danger"> 3. 建议在所有的表名前加上库名限定，如dbname.tablename</p>
+                                    <p class="bg-danger"> 4. 不同表的DML语句请拆分成不同的任务提交 </p>
+                                    <p class="bg-danger"> 5.如果执行成功，可以看到最下面的执行状态为"executed",并且可以看到"已备份执行"的反向SQL </p>
+                                   <p class="bg-danger"> 6.主键冲突不会被检测到</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+
+                    </br> </br>
+                    <table>
+{#                         <tr>#}
+{#                            <td>#}
+{#                               执行说明 <span style="color:red">{{ status }}</span>#}
+{#                            </td>#}
+{#                        </tr>#}
+
+                        <tr>
+                            <td>
+                              请输入要审核执行的SQL脚本:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                {{ form.a }}
+                            </td>
+                        </tr>
+                      <tr>
+                          <td>
+                              <button type="submit" name='check' class="btn btn-primary">SQL检查</button>
+                    <!--<button type="submit" name='upload' class="btn btn-warning">脚本上传</button >-->
+                             <button type="submit" name='addsql' onclick="return confirm('PLEASE COMFIRM')" class="btn btn-danger">SQL执行</button>
+                          </td>
+                      </tr>
+{#                        <tr>#}
+{#                            <td>#}
+{#                               <div class="col-md-12">#}
+{##}
+{#                                    <h3>查询注意事项:</h3>#}
+{#                                    <p class="bg-danger"> 1. 支持多条语句一起审核</p>#}
+{#                                    <p class="bg-info"> 2. 点击"检查语句"后，如果返回的结果中"errlevel"都为0,则语句没问题,不然请查看"errormessage"中的提示</p>#}
+{#                                    <p class="bg-danger"> 3. 建议在所有的表名前加上库名限定，如dbname.tablename</p>#}
+{#                                    <p class="bg-danger"> 4. 同一张表的DDL和DML语句请拆分成不同的任务提交 </p>#}
+{##}
+{#                                </div>#}
+{#                            </td>#}
+{#                        </tr>#}
+                    </table>
+{#                    </br>#}
+{#                    {{ form.a }} </br> </br>#}
+                    <!--{\{ upform.filename }}-->
+                    {#                    <input type=="text" maxlength="30" class="form-control" placeholder="执行说明，可选，最多30字" name="specification">#}
+{#                    <span style="color:red"> 【提交任务】请选择是【否需要备份】</span>#}
+{#                    <select class="form-control" name="ifbackup">#}
+{#                        {% if needbackup %}#}
+{#                            {% if needbackup == 1 %}#}
+{#                                <option value=1 selected="selected">需要备份</option>#}
+{#                                <option value=0>不需要备份</option>#}
+{#                            {% elif  needbackup == 0 %}#}
+{#                                <option value=1>需要备份</option>#}
+{#                                <option value=0 selected="selected">不需要备份</option>#}
+{#                            {% endif %}#}
+{#                        {% else %}#}
+{#                            <option value=1 selected="selected">需要备份</option>#}
+{#                            <option value=0>不需要备份</option>#}
+{#                        {% endif %}#}
+{#                    </select>#}
+
+
+                </form>
+            </td>
+{#            <td>#}
+{#                <div class="col-md-12">#}
+{##}
+{#                    <h3>查询注意事项:</h3>#}
+{#                    <p class="bg-danger"> 1. 支持多条语句一起审核</p>#}
+{#                    <p class="bg-info"> 2. 点击"检查语句"后，如果返回的结果中"errlevel"都为0,则语句没问题,不然请查看"errormessage"中的提示</p>#}
+{#                    <p class="bg-danger"> 3. 建议在所有的表名前加上库名限定，如dbname.tablename</p>#}
+{#                    <p class="bg-danger"> 4. 同一张表的DDL和DML语句请拆分成不同的任务提交 </p>#}
+{##}
+{#                    </br>#}
+{#                    </br>#}
+{#                    </br>#}
+{#                    </br>#}
+{#                    </br>#}
+{#                </div>#}
+{##}
+{##}
+                {#                </div>#}
+{#            </td>#}
+        </tr>
+    </table>
+    {% if split %}
+        <strong> <span style="color:red">请根据审核提示，拆分任务提交 </br> </span></strong>
+    {% endif %}
+    {% if collist %}
+        {% include "include/pagejump/pagebutton.html" %}
+    {% endif %}
+    <table id="mytable" class="table table-condensed" border="1">
+        <thead>
+        <tr class="danger">
+            {% for colname in collist %}
+                {% if forloop.counter <= 7 %}
+                    <th>{{ colname }}</th>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in data_list %}
+            <tr>
+                {% for item_detail in item %}
+                    {% if forloop.counter <= 7 %}
+                        {% if forloop.counter == 6 %}
+                            <td> {{ item_detail|truncatechars:250|linebreaks }}</td>
+                        {% elif forloop.counter == 5 or forloop.counter == 2 %}
+                            <td> {{ item_detail|linebreaks }}</td>
+                        {% else %}
+                            <td> {{ item_detail }}</td>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+  {% if datalist %}
+     <table id="mytable2" class="table table-condensed" border="1">
+            <thead>
+            <tr class="danger">
+                <th>ID</th>
+                <th noWrap>提交人</th>
+                <th noWrap>执行人</th>
+                <th>DBTAG</th>
+                <th>SQL语句</th>
+                <th>创建时间</th>
+                <th>修改时间</th>
+                <th>任务状态</th>
+                <th>预约时间</th>
+                <th noWrap>执行说明</th>
+                <th>备份状态</th>
+            </tr>
+            </thead>
+            <tbody  >
+            {% for item in datalist %}
+                <tr>
+                    {#                    <td>{{ item.id }}  </td>#}
+                    <td noWrap>{{ item.id }} <input type="checkbox" size="100" name="choosedlist" value={{ item.id }}>  </td>
+                    <td> {{ item.user }}</td>
+                    <td>{{ item.operator }}</td>
+                    <td> {{ item.dbtag }}</td>
+                    <td> {{ item.sqltext|truncatechars:100|linebreaks }}</td>
+                    {#                    <td><input type=="text" class="form-control" name="accountname" value="{{ item.sqltext }}"></td>#}
+                    <td> {{ item.create_time|date:"Y-m-d H:i:s" }}</td>
+                    <td> {{ item.update_time|date:"Y-m-d H:i:s" }}</td>
+                    <td > {{ item.status }}</td>
+                    <td > {{ item.sche_time|date:"Y-m-d H:i" }}</td>
+                    <td >
+                        {{ item.specification|truncatechars:30|linebreaks}}
+                    </td>
+                    <td  noWrap>
+                            <button type="button" class="backup_info" type="button" value="{{ item.id }}" title="点击查看备份语句">已备份执行</button>
+                    </td>
+
+
+
+                </tr>
+
+            {% endfor %}
+
+            <script>
+                jeDate({
+                    dateCell:"#id_sche_time",
+                    format:"YYYY-MM-DD hh:mm:ss",
+                    isinitVal:true,
+                    isTime:true, //isClear:false,
+                    minDate:"2014-09-19 00:00:00",
+                    okfun:function(val){alert(val)}
+                })
+                function checkstatus() {
+                    var tableId = document.getElementById("mytable");
+                    var str = "";
+                    for (var i = 1; i < tableId.rows.length; i++) {
+                        var value = tableId.rows[i].cells[7];
+                        if (value.innerText == "executed") {
+                            value.setAttribute("class", "success");
+
+                        }
+                        else if (value.innerText == "check passed") {
+                            value.setAttribute("class", "warning");
+
+                        }
+                        else if (value.innerText == "running") {
+                            value.setAttribute("class", "active");
+                        }
+                        else {
+                            value.setAttribute("class", "danger");
+                        }
+                        var sched = tableId.rows[i].cells[8];
+                        if (sched.innerText == "2199-01-01 00:00"){
+                            sched.innerText='NOT SCHEDULED';
+                            sched.setAttribute("class", "danger");
+
+                        }
+                        else{
+                            sched.setAttribute("class", "active");
+
+                        }
+                    }
+                }
+                function checkbox () {
+                    var str=document.getElementsByName("choosedlist");
+                    var n = str.length;
+                    var k = 0;
+                    for (var i=0; i<n;i++){
+                        if(str[i].checked){
+                            k = 1;
+                        }
+                    }
+                    if(k==0){
+                        alert("请勾选TASK!");
+                        return false;
+                    }
+                }
+
+            </script>
+
+
+            </tbody>
+        </table>
+  {% endif %}
+    <div class="modal fade" id="myModal"  style="width:50%;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form role="form" action="" method="post">
+                        {% csrf_token %}
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">回滚语句</h4>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div  class="col-md-12">
+                                            <table id="myTb"  class="table table-bordered" width="100%" style="table-layout:fixed;">
+                                                {#                                                 <table id="myTb"   border="0" cellspacing="1" style="background-color:#a0c6e5">#}
+                                                {#                                                    <td style="overflow-x: auto;" noWrap>#}
+                                                {#                                                        <p id="list_result"></p>#}
+                                                {#                                                    </td>#}
+                                                {#                                                </tr>#}
+
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                            </div>
+                        </div>
+                    </form>
+
+                </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+{% endblock %}
+{#{% block script %}#}
+{#    {% include "include/pagejump/pagejump.html" %}#}
+{#{% endblock %}#}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    {#    <script>#}
+    {#    $(document).ready(function(){#}
+    {#        $('#mytable1').DataTable();#}
+    {#    });#}
+    {#</script>#}
+    <script>
+        $(document).ready(function(){
+            $('#mytable1').DataTable({
+                "lengthMenu": [[5,25,100], [5,25,100]],
+                "order": []
+
+            });
+
+        });
+    </script>
+
+    <script>
+
+        $(document).ready(function(){
+            $('#myModal').modal({
+                keyboard: false,
+                show: false,
+                backdrop:false
+            })
+            $(document).on("click",'.backup_sql', function() {
+                {#            $('.backup_sql').on('click',function() {#}
+                var sequenceid = $(this).attr("value");
+                {#                alert(sequenceid);#}
+                $.get("{% url 'get_single_rollback' %}",{'sequenceid':sequenceid}).done(function (data) {
+                    $('#myModal').modal({
+                        show: true
+                    });
+                    $("#myTb").empty("");
+                    var tbHead = " <thead><tr><th width=\"30\">ID</th><th>SQL</th></tr></thead><tbody>";
+                    $("#myTb").append(tbHead);
+                    for (var i =0 ; i <= data.length - 1; i++) {
+                        var tbBody = ""
+                        tbBody += "<tr><td width=\"30\">"+(i+1)+"</td><td style=\"word-wrap:break-word;\">" + data[i] +  "</td></tr>";
+                        $("#myTb").append(tbBody);
+
+                        {#                        $('#list_result').append(' ' + data[i]);#}
+                    };
+                    $("#myTb").append("</tbody>");
+                    $('#myTb').dataTable().fnDestroy();
+                    $('#myTb').DataTable({
+                        "lengthMenu": [[5,10], [5,10]],
+                        "order": []
+                    });
+
+                });
+            });
+
+            $('.backup_info').click(function(){
+                var taskid = $(this).attr("value");
+                $.get("{% url 'get_rollback' %}",{'taskid':taskid}).done(function (data) {
+                    $('#myModal').modal({
+                        show: true
+                    });
+                    $("#myTb").empty("");
+                    var tbHead = " <thead><tr><th width=\"30\">ID</th><th>SQL</th></tr></thead><tbody>";
+                    $("#myTb").append(tbHead);
+                    for (var i =0 ; i <= data.length - 1; i++) {
+                        var tbBody = ""
+                        tbBody += "<tr><td width=\"30\">"+(i+1)+"</td><td style=\"word-wrap:break-word;\">" + data[i] +  "</td></tr>";
+                        $("#myTb").append(tbBody);
+
+                        {#                        $('#list_result').append(' ' + data[i]);#}
+                    };
+                    $("#myTb").append("</tbody>");
+                    $('#myTb').dataTable().fnDestroy();
+                    $('#myTb').DataTable({
+                        "lengthMenu": [[5,10], [5,10]],
+                        "order": []
+                    });
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

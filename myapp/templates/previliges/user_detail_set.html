@@ -1,0 +1,164 @@
+{% extends "include/base.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>权限查询</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-briefcase"></i>权限管理</a></li>
+                <li class="active"><i class="fa fa-th"></i>用户资料明细</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>用户资料明细</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>UserInof Detail</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            {% csrf_token %}
+                            <input type="hidden" name="id_user" id="id_user">
+                            <label class="col-xs-1 control-label">用户</label>
+                            <div class="col-md-6">
+                               <input type=="text" class="form-control" maxlength="30"
+                                        name="username" id="username">
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+
+                            <label class="col-xs-1 control-label">姓名</label>
+                            <div class="col-md-6">
+                                <input type=="text" class="form-control" maxlength="30"
+                                       placeholder="input realname for user" name="realname" id="realname">
+
+                            </div>
+                            </br>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="col-xs-1 control-label">岗位</label>
+                            <div class="col-md-6">
+                                <input type=="text" class="form-control" maxlength="30"
+                                       placeholder="input department for user" name="position" id="position">
+
+                            </div>
+                            </br>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="col-xs-1 control-label">电话</label>
+                            <div class="col-md-6">
+                                <input type=="text" class="form-control" maxlength="30"
+                                       placeholder="input telephone for user" name="telephone" id="telephone">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+
+                            <label class="col-xs-1 control-label">微信</label>
+                            <div class="col-md-6">
+                                <input type=="text" class="form-control" maxlength="30"
+                                       placeholder="input wechart for user" name="wechart" id="wechart">
+                            </div>
+                            <button type="submit" name="query" value="1" class="btn btn-info">查询</button>
+                            <button type="submit" name="saveinfo" value="1" class="btn btn-warning">保存</button>
+                        </div>
+                    </div>
+
+
+                </div>
+
+               <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            {% include "include/pagejump/pagebutton.html" %}
+                            {#                            {% if datalist %}#}
+                            {#                                {% include "include/pagejump/pagebutton.html" %}#}
+                            {#                            {% endif %}#}
+                            <table id="mytable" class="table table-bordered table-striped table-condensed table-hover">
+                                <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>资料编号</th>
+                                    <th>用户名</th>
+                                    <th>姓名</th>
+                                    <th>岗位</th>
+                                    <th>电话号码</th>
+                                    <th>微信号</th>
+                                    <th>创建时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in datalist %}
+                                    <tr>
+                                        <td> {{ item.0 }}</td>
+                                        <td onclick="getProinfo(this)"> {{ item.1 }}</td>
+                                        <td> {{ item.2 }}</td>
+                                        <td> {{ item.3 }}</td>
+                                        <td> {{ item.4 }}</td>
+                                        <td> {{ item.5 }}</td>
+                                        <td> {{ item.6 }}</td>
+                                        <td> {{ item.7|date:"Y-m-d H:i:s" }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    <script language="javascript">
+        function getProinfo(node) {
+            var tr1 = node.parentNode;
+            document.getElementById("id_user").value = tr1.cells[0].innerHTML.trim();
+            document.getElementById("username").value = tr1.cells[2].innerHTML.trim();
+            document.getElementById("username").setAttribute("readOnly", true);
+            document.getElementById('realname').value = tr1.cells[3].innerHTML.trim();
+            document.getElementById('position').value = tr1.cells[4].innerHTML.trim();
+            document.getElementById('telephone').value = tr1.cells[5].innerHTML.trim();
+            document.getElementById('wechart').value = tr1.cells[6].innerHTML.trim();
+        }
+    </script>
+
+{% endblock %}

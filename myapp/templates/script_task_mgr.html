@@ -1,0 +1,291 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>脚本执行管理</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="icon fa fa-list-alt"></i>脚本管理</a></li>
+                <li class="active"><i class="fa fa-plus-square-o"></i>脚本执行管理</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>脚本执行管理</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>DBscript Task Management</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">选择数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host %}
+
+                                    <select class="form-control col-md-1" name="dbhost">
+
+                                        {% for obj in  objlist %}
+                                            {% if obj == choosed_host %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select></br>
+                                {% else %}
+                                    <select class="form-control col-md-1" name="dbhost">
+                                        {% for obj in objlist %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">选择项目</label>
+                            <div class="col-md-6">
+                                {% csrf_token %}
+                                {% if choosed_pro %}
+                                    <select class="form-control col-md-1" name="cx">
+
+                                        {% for pro in  prolist %}
+                                            {% if pro.id == choosed_pro %}
+                                                <option selected="selected"
+                                                        value="{{ pro.id }}">{{ pro.proname }}</option>
+                                            {% else %}
+                                                <option value="{{ pro.id }}">{{ pro.proname }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select class="form-control col-md-1" name="cx">
+                                        {% for pro in prolist %}
+                                            <option value="{{ pro.id }}">{{ pro.proname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+{#                        <div class="form-group">#}
+{#                            <label class="col-xs-1 control-label">转移阶段</label>#}
+{#                            <div class="col-md-6">#}
+{#                                <h7>{{ promemo }}</h7>#}
+{#                            </div>#}
+{#                        </div>#}
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='commit' class="btn btn-primary">查询脚本</button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">目标转移数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host_trans %}
+                                    <select class="form-control col-md-1" name="dbhost_trans">
+
+                                        {% for obj in  objlist_trans %}
+                                            {% if obj == choosed_host_trans %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select class="form-control col-md-1" name="dbhost_trans">
+                                        {% for obj in objlist_trans %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='script_trans' class="btn btn-danger">脚本转移</button>
+                                <span style="color:red">{{ rows }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            {% if nllflag %}
+                                <span style="color:red"></br>处理结果
+            <strong> {{ nllflag }}</strong></span>
+                            {% endif %}
+                            {% if chktime_result %}
+                                <span style="color:red"></br>处理结果
+            <strong> {{ chktime_result }}</strong></span>
+                            {% endif %}
+                            {% if result %}
+                                {#            {% include "include/pagejump/pagejump2.html" %}#}
+                                <table id="mytable1"
+                                       class="table table-bordered table-striped table-condensed table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for colname in col %}
+                                            <th>{{ colname }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in result %}
+                                        <tr>
+                                            {% for item_detail in item %}
+                                                {% if forloop.counter == 6 %}
+                                                    <td> {{ item_detail|truncatechars:550|linebreaks }}</td>
+                                                {% elif forloop.counter == 5 or forloop.counter == 2 %}
+                                                    <td> {{ item_detail|linebreaks }}</td>
+                                                {% else %}
+                                                    <td> {{ item_detail }}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                            {% if result_status %}
+                                <table id="mytable1"
+                                       class="table table-bordered table-striped table-condensed table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for colname in cols %}
+                                            <th>{{ colname }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in result_status %}
+                                        <tr>
+                                            <td>
+                                                {{ item.sqltext|linebreaks }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                            {% include "include/pagejump/pagebutton.html" %}
+                            <body>
+                            <table id="mytable"
+                                   class="table table-bordered table-striped table-condensed table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th noWrap>项目编号</th>
+                                    <th noWrap>项目名称</th>
+                                    <th>SQL创建人</th>
+                                    <th>DB标签</th>
+                                    <th>SQL标注</th>
+                                    <th>加入task</th>
+                                    <th>SQL内容</th>
+                                    <th>SQL状态</th>
+                                    <th>创建时间</th>
+                                    <th>更新时间</th>
+                                    <th>操作</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in datalist %}
+                                    <tr>
+                                        {#                    <td>{{ item.id }}  </td>#}
+                                        {#                "prono", "proname",  "STATUS" ,"USER", "dbtag","sqltext"#}
+                                        {#                create_time, dbtag, id, operator, pro_id, pro_id_id, sche_time, sql_memo, sqlsha, sqltext, status, update_time, user#}
+                                        <td noWrap>{{ item.id }} <input type="checkbox" size="100"
+                                                                        name="choosedlist"
+                                                                        value={{ item.id }}>
+                                        </td>
+                                        {% if data01 %}
+                                            {% for data in data01 %}
+                                                <td> {{ data.prono }}</td>
+                                                <td>{{ data.proname }}</td>
+                                            {% endfor %}
+                                        {% else %}
+                                            <td></td>
+                                            <td></td>
+                                        {% endif %}
+                                        <td> {{ item.operator }}</td>
+                                        <td> {{ item.dbtag }}</td>
+                                        <td> {{ item.sql_memo }}</td>
+                                        <td>{{ item.add_task }}</td>
+                                        <td> {{ item.sqltext|truncatechars:100|linebreaks }}</td>
+                                        <td> {{ item.status }}</td>
+                                        {#                    <td><input type=="text" class="form-control" name="accountname" value="{{ item.sqltext }}"></td>#}
+                                        <td> {{ item.create_time|date:"Y-m-d H:i:s" }}</td>
+                                        <td> {{ item.update_time|date:"Y-m-d H:i:s" }}</td>
+                                        <td>
+                                            <button type="submit" name='see_sql' class="btn btn-info"
+                                                    value={{ item.id }}>详细SQL
+                                            </button>
+                                        </td>
+                                        <td>
+                                            {% if item.add_task == 'yes' %}
+                                                <input type="button" name='add_task' class="btn btn-warning"
+                                                       value="已运行">
+                                            {% else %}
+                                                <button type="submit" name='add_task' class="btn btn-warning"
+                                                        value={{ item.id }}>加入运行
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.add_task == 'yes' %}
+                                                <input type="button" name='task_delete' class="btn btn-warning"
+                                                       value="已完成">
+                                            {% else %}
+                                                <button type="submit" name='task_delete' class="btn btn-warning"
+                                                        value={{ item.id }}>删除
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            </body>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+{% endblock %}

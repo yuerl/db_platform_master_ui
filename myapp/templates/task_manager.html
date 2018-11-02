@@ -1,0 +1,514 @@
+{% extends "include/base.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>任务管理</title>
+
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="icon fa fa-signal"></i>DB管理</a></li>
+                <li class="active"><i class="fa fa-random"></i>任务管理</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>任务管理</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Task Management</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <label class="col-xs-1 control-label">选择数据库</label>
+                                <div class="col-md-6">
+                                    {% csrf_token %}
+                                    {% if choosed_host %}
+                                        <select class="form-control col-md-1" name="hosttag">
+                                            <option value="{{ choosed_host }}">{{ choosed_host }}</option>
+                                        </select>
+                                        <a href="/task/"><input type="button" value="重选数据源" class="btn btn-danger"></a>
+                                    {% else %}
+                                        <select class="form-control col-md-1" name="hosttag">
+                                            {% for obj in objlist %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                起始时间:{{ form.begin }}
+                                截止时间：{{ form.end }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='commit' class="btn btn-primary">查询任务</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body"  style="overflow:auto">
+                        <div class="table-responsive">
+                            {% if nllflag %}
+                                <span style="color:red"></br>处理结果
+            <strong> {{ nllflag }}</strong></span>
+                            {% endif %}
+                            {% if chktime_result %}
+                                <span style="color:red"></br>处理结果
+            <strong> {{ chktime_result }}</strong></span>
+                            {% endif %}
+
+                            {% if result %}
+                                {#            {% include "include/pagejump/pagejump2.html" %}#}
+                                <table id="mytable1" class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        {% for colname in col %}
+                                            <th>{{ colname }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in result %}
+                                        <tr>
+                                            {% for item_detail in item %}
+                                                {% if forloop.counter == 6 %}
+                                                    <td> {{ item_detail|truncatechars:550|linebreaks }}</td>
+                                                {% elif forloop.counter == 5 or forloop.counter == 2 %}
+                                                    <td> {{ item_detail|linebreaks }}</td>
+                                                {% else %}
+                                                    <td> {{ item_detail }}</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+
+
+                            {% if result_status %}
+                                {#            {% include "include/pagejump/pagejump2.html" %}#}
+                                <table id="mytable1" class="table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        {% for colname in cols %}
+                                            <th>{{ colname }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in result_status %}
+                                        <tr>
+                                            {% if item.myid %}
+                                                <td> {{ item.myid }}</td>
+                                                <td> {{ item.stage }}</td>
+                                                <td> {{ item.errlevel }}</td>
+                                                <td> {{ item.stagestatus|linebreaks }}</td>
+                                                <td> {{ item.errormessage|linebreaks }}</td>
+                                                <td> {{ item.sqltext|linebreaks }}</td>
+                                                {#  <td> <a target="_blank" >{{ item.sqltext|linebreaks }}</a></td>#}
+                                                <td> {{ item.affectrow }}</td>
+                                                {#  <td> {{ item.sequence|truncatechars:10  }}</td>#}
+                                                <td>
+                                                    {% if item.stagestatus|length == 40 %}
+                                                        <button type="button" class="backup_sql" type="button"
+                                                                value="{{ item.sequence }}"
+                                                                title="点击查看备份语句"> {{ item.sequence }}</button>
+                                                    {% else %}
+                                                        {{ item.sequence }}
+                                                    {% endif %}
+                                                </td>
+
+                                                <td> {{ item.backup_db }}</td>
+                                                <td> {{ item.execute_time }}</td>
+                                                <td> {{ item.sqlsha|truncatechars:7 }}</td>
+                                                <td> {{ item.create_time|date:"Y-m-d H:i:s" }}</td>
+                                                <td> {{ item.finish_time|date:"Y-m-d H:i:s" }}</td>
+                                            {% else %}
+                                                {% for item_detail in item %}
+                                                    {% if forloop.counter == 6 %}
+                                                        <td> {{ item_detail|linebreaks }}</td>
+                                                    {% elif forloop.counter == 7 %}
+                                                        <td> {{ item_detail|truncatechars:150|linebreaks }}</td>
+                                                    {% else %}
+                                                        <td> {{ item_detail }}</td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if perms.myapp.can_admin_task %}
+                                                    {% if 'SQLSHA1' in cols %}
+                                                        {% if '*' in item.2 %}
+                                                            <td>
+                                                                <button type="submit" name='stop' class="btn btn-danger"
+                                                                        value={{ item.2 }}>停止
+                                                                </button>
+                                                            </td>
+                                                        {% endif %}
+                                                    {% elif 'TIME' in cols and 'STATE' in cols %}
+                                                        <td>
+                                                            <button type="submit" name='stop' class="btn btn-danger"
+                                                                    value={{ item.0 }}>停止
+                                                            </button>
+                                                        </td>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endif %}
+                                        </tr>
+
+                                        {% if 'SQLSHA1' in cols %}
+                                            <tr>
+                                                {% if '*' in item.2 %}
+                                                    <div class="progress">
+                                                        <div class="progress-bar" role="progressbar"
+                                                             aria-valuenow=item.3 aria-valuemin="0" aria-valuemax="100"
+                                                             style="width: {{ item.3 }}%;">
+                                                            {{ item.3 }}%
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </tr>
+                                        {% endif %}
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <hr>
+                            {% endif %}
+
+                            {% include "include/pagejump/pagebutton.html" %}
+                            <body onload="checkstatus()">
+                            <table id="mytable" class="table table-condensed">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th noWrap>提交人</th>
+                                    <th noWrap>执行人</th>
+                                    <th>DBTAG</th>
+                                    <th>SQL语句</th>
+                                    <th>创建时间</th>
+                                    <th>修改时间</th>
+                                    <th>任务状态</th>
+                                    <th noWrap>执行说明</th>
+                                    <th>备份状态</th>
+                                    <th>操作</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                {% for item in datalist %}
+                                    <tr>
+                                        {#                    <td>{{ item.id }}  </td>#}
+                                        <td noWrap>{{ item.id }} <input type="checkbox" size="100" name="choosedlist"
+                                                                        value={{ item.id }}></td>
+                                        <td> {{ item.user }}</td>
+                                        <td>{{ item.operator }}</td>
+                                        <td> {{ item.dbtag }}</td>
+                                        <td> {{ item.sqltext|truncatechars:100|linebreaks }}</td>
+                                        {#                    <td><input type=="text" class="form-control" name="accountname" value="{{ item.sqltext }}"></td>#}
+                                        <td> {{ item.create_time|date:"Y-m-d H:i:s" }}</td>
+                                        <td> {{ item.update_time|date:"Y-m-d H:i:s" }}</td>
+                                        <td> {{ item.status }}</td>
+                                        <td>
+                                            {{ item.specification|truncatechars:30|linebreaks }}
+                                        </td>
+                                        <td noWrap>
+                                            {% if item.backup_status == 1 %}
+                                                需要备份
+                                            {% elif item.backup_status == 0 %}
+                                                无需备份
+                                            {% elif item.backup_status == 2 %}
+                                                <button type="button" class="backup_info" type="button"
+                                                        value="{{ item.id }}" title="点击查看备份语句">已备份执行
+                                                </button>
+                                            {% endif %}
+
+                                        </td>
+                                        {#                    {% if  perms.myapp.can_admin_task or perms.myapp.can_delete_task    %}#}
+                                        {% if  perms.myapp.can_admin_task  and  request.user.username == 'admin' %}
+                                            <td>
+                                                <button type="submit" name='delete'
+                                                        class="bk-margin-5 btn btn-primary btn-sm"
+                                                        style="height: 30px;width: 50px" value={{ item.id }}>
+                                                    删除
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                        <td>
+                                            <button type="submit" name='check'
+                                                    class="bk-margin-5 btn btn-warning btn-sm"
+                                                    style="height: 30px;width: 50px" value={{ item.id }}>审核
+                                            </button>
+                                        </td>
+                                        {% if perms.myapp.can_admin_task %}
+                                            <td>
+                                                <button type="submit" name='exec'
+                                                        onclick="return confirm('PLEASE COMFIRM')"
+                                                        class="bk-margin-5 btn btn-success btn-sm"
+                                                        style="height: 30px;width: 50px" value={{ item.id }}>执行
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                        <td>
+                                            <button type="submit" name='see_running'
+                                                    class="bk-margin-5 btn btn-info btn-sm"
+                                                    style="height: 30px;width: 50px" value={{ item.id }}>状态
+                                            </button>
+                                        </td>
+                                        {% if  perms.myapp.can_admin_task  and  request.user.username == 'admin' %}
+                                            <td>
+                                                <button type="submit" name='update'
+                                                        class="bk-margin-5 btn btn-danger btn-sm"
+                                                        style="height: 30px;width: 80px" value={{ item.id }}>
+                                                    查询修改
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+
+                            </table>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <select class="form-control" name="charset">
+                                        <option value="UTF8">UTF8</option>
+                                        <option value="GB18030">GB18030</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="submit" name='export_task' class="btn btn-warning"
+                                            onclick="return checkbox()">导出任务
+                                    </button>
+                                </div>
+
+                                <div class="modal fade" id="myModal" style="width:50%;" tabindex="-1" role="dialog"
+                                     aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <form role="form" action="" method="post">
+                                            {% csrf_token %}
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close"><span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                    <h4 class="modal-title">回滚语句</h4>
+                                                </div>
+                                                <div class="modal-body" style="overflow:auto">
+
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <table id="myTb"
+                                                                       class="table table-bordered table-striped table-condensed table-hover" >
+                                                                    {#                                                 <table id="myTb"   border="0" cellspacing="1" style="background-color:#a0c6e5">#}
+                                                                    {#                                                    <td style="overflow-x: auto;" noWrap>#}
+                                                                    {#                                                        <p id="list_result"></p>#}
+                                                                    {#                                                    </td>#}
+                                                                    {#                                                </tr>#}
+
+                                                                </table>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                                                        Close
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal -->
+
+                            </div>
+                            </body>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+    <script type="text/javascript" src="{% static 'jedate/jedate.js' %}"></script>
+    <script type="text/javascript">
+        jeDate({
+            dateCell: "#id_begin",
+            format: "YYYY-MM-DD hh:mm:ss",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) {
+                alert(val)
+            }
+        })
+        jeDate({
+            dateCell: "#id_end",
+            format: "YYYY-MM-DD hh:mm:ss",
+            isinitVal: true,
+            isTime: true, //isClear:false,
+            minDate: "2014-09-19 00:00:00",
+            okfun: function (val) {
+                alert(val)
+            }
+        })
+
+        function checkstatus() {
+            var tableId = document.getElementById("mytable");
+            var str = "";
+            for (var i = 1; i < tableId.rows.length; i++) {
+                var value = tableId.rows[i].cells[7];
+                if (value.innerText == "executed") {
+                    value.setAttribute("class", "success");
+
+                }
+                else if (value.innerText == "check passed") {
+                    value.setAttribute("class", "warning");
+
+                }
+                else if (value.innerText == "running") {
+                    value.setAttribute("class", "active");
+                }
+                else {
+                    value.setAttribute("class", "danger");
+                }
+                var sched = tableId.rows[i].cells[8];
+                if (sched.innerText == "2199-01-01 00:00") {
+                    sched.innerText = 'NOT SCHEDULED';
+                    sched.setAttribute("class", "danger");
+
+                }
+                else {
+                    sched.setAttribute("class", "active");
+
+                }
+            }
+        }
+
+        function checkbox() {
+            var str = document.getElementsByName("choosedlist");
+            var n = str.length;
+            var k = 0;
+            for (var i = 0; i < n; i++) {
+                if (str[i].checked) {
+                    k = 1;
+                }
+            }
+            if (k == 0) {
+                alert("请勾选TASK!");
+                return false;
+            }
+        }
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#myModal').modal({
+                keyboard: false,
+                show: false,
+                backdrop: false
+            })
+            $(document).on("click", '.backup_sql', function () {
+                {#            $('.backup_sql').on('click',function() {#}
+                var sequenceid = $(this).attr("value");
+                {#                alert(sequenceid);#}
+                $.get("{% url 'get_single_rollback' %}", {'sequenceid': sequenceid}).done(function (data) {
+                    $('#myModal').modal({
+                        show: true
+                    });
+                    $("#myTb").empty("");
+                    var tbHead = " <thead><tr><th width=\"30\">ID</th><th>SQL</th></tr></thead><tbody>";
+                    $("#myTb").append(tbHead);
+                    for (var i = 0; i <= data.length - 1; i++) {
+                        var tbBody = ""
+                        tbBody += "<tr><td width=\"30\">" + (i + 1) + "</td><td style=\"word-wrap:break-word;\">" + data[i] + "</td></tr>";
+                        $("#myTb").append(tbBody);
+
+                        {#                        $('#list_result').append(' ' + data[i]);#}
+                    }
+                    ;
+                    $("#myTb").append("</tbody>");
+                    $('#myTb').dataTable().fnDestroy();
+                    $('#myTb').DataTable({
+                        "lengthMenu": [[5, 10], [5, 10]],
+                        "order": []
+                    });
+
+                });
+            });
+
+            $('.backup_info').click(function () {
+                var taskid = $(this).attr("value");
+                $.get("{% url 'get_rollback' %}", {'taskid': taskid}).done(function (data) {
+                    $('#myModal').modal({
+                        show: true
+                    });
+                    $("#myTb").empty("");
+                    var tbHead = " <thead><tr><th width=\"30\">ID</th><th>SQL</th></tr></thead><tbody>";
+                    $("#myTb").append(tbHead);
+                    for (var i = 0; i <= data.length - 1; i++) {
+                        var tbBody = ""
+                        tbBody += "<tr><td width=\"30\">" + (i + 1) + "</td><td style=\"word-wrap:break-word;\">" + data[i] + "</td></tr>";
+                        $("#myTb").append(tbBody);
+
+                        {#                        $('#list_result').append(' ' + data[i]);#}
+                    }
+                    ;
+                    $("#myTb").append("</tbody>");
+                    $('#myTb').dataTable().fnDestroy();
+                    $('#myTb').DataTable({
+                        "lengthMenu": [[5, 10], [5, 10]],
+                        "order": []
+                    });
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

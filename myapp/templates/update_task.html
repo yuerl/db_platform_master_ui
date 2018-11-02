@@ -1,0 +1,200 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>更新任务</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-envelope"></i>DB管理</a></li>
+                <li class="active"><i class="fa fa-envelope-o"></i>更新任务</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>更新任务</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+    <div class="row">
+
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            {% if data %}
+                <div class="col-lg-12">
+                    <div class="panel">
+                        <div class="panel-heading bk-bg-primary">
+                            <h6><i class="fa fa-indent red"></i>Update Task</h6>
+                            <div class="panel-actions">
+                                <a href="form-elements.html#" class="btn-setting"><i
+                                        class="fa fa-rotate-right black"></i></a>
+                                <a href="form-elements.html#" class="btn-minimize"><i
+                                        class="fa fa-chevron-up black"></i></a>
+                                <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <table id="user" class="table table-bordered table-striped" style="clear: both">
+                                <tbody>
+                                <tr>
+                                    <td width="10%">id</td>
+                                    <td width="40%">{{ data.id }}</td>
+                                    <td width="10%">USER</td>
+                                    <td width="40%">{{ data.user }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="10%">DBTAG</td>
+                                    {% if perms.myapp.can_see_inception or perms.myapp.can_update_task  or perms.myapp.can_admin_task %}
+                                        <td width="40%" colspan="3">
+                                            <select class="form-control col-md-1" name="hosttag" style="height: 30px ">
+                                                {% for obj in objlist %}
+                                                    {% if obj == choosed_host or obj == data.dbtag %}
+                                                        <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                                    {% else %}
+                                                        <option value="{{ obj }}">{{ obj }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" name='new_task' style="height: 30px "
+                                                    onclick="return confirm('PLEASE COMFIRM')" class="btn btn-warning">
+                                                执行环境变更
+                                            </button>
+
+                                            {% if db_se %}
+                                                <input type=="text" class="form-control" maxlength="30"
+                                                       style="height: 30px"
+                                                       placeholder="search for dbname" value="{{ db_se }}"
+                                                       name="searchname">
+                                            {% else %}
+                                                <input type=="text" class="form-control" maxlength="30"
+                                                       style="height: 30px"
+                                                       placeholder="search for dbname" name="searchname">
+                                            {% endif %}
+                                            <button type="submit" name='searchdb' class="btn btn-info" value="1"
+                                                    style="height: 30px">搜索库
+                                            </button>
+
+                                        </td>
+                                    {% else %}
+                                        <td width="40%" colspan="3">> {{ data.dbtag }}</td>
+                                    {% endif %}
+                                </tr>
+                                <tr>
+                                    <td width="10%">创建时间</td>
+                                    <td width="40%">{{ data.create_time|date:"Y-m-d H:i:s" }}</td>
+                                    <td width="10%">修改时间</td>
+                                    <td width="40%">{{ data.update_time|date:"Y-m-d H:i:s" }}</td>
+                                </tr>
+                                <tr>
+                                    <td width="10%">任务状态</td>
+                                    {% if perms.myapp.can_admin_task %}
+                                        <td width="40%">
+                                            <select class="form-control col-md-1" name="status" style="height: 30px">
+                                                {% if data.status == 'executed' %}
+                                                    <option selected="selected" value="executed">executed</option>
+                                                {% else %}
+                                                    <option value="executed">executed</option>
+                                                {% endif %}
+                                                {% if data.status == 'executed failed' %}
+                                                    <option selected="selected" value="executed failed">executed
+                                                        failed
+                                                    </option>
+                                                {% else %}
+                                                    <option value="executed failed">executed failed</option>
+                                                {% endif %}
+                                                {% if data.status == 'check not passed' %}
+                                                    <option selected="selected" value="check not passed">check not
+                                                        passed
+                                                    </option>
+                                                {% else %}
+                                                    <option value="check not passed">check not passed</option>
+                                                {% endif %}
+                                                {% if data.status == 'check passed' %}
+                                                    <option selected="selected" value="check passed">check passed
+                                                    </option>
+                                                {% else %}
+                                                    <option value="check passed">check passed</option>
+                                                {% endif %}
+                                                {% if data.status == 'running' %}
+                                                    <option selected="selected" value="running">running</option>
+                                                {% else %}
+                                                    <option value="running">running</option>
+                                                {% endif %}
+
+                                                {% if data.status == 'appointed' %}
+                                                    <option selected="selected" value="appointed">appointed</option>
+                                                {% else %}
+                                                    <option value="appointed">appointed</option>
+                                                {% endif %}
+                                                {% if data.status == 'NULL' %}
+                                                    <option selected="selected" value="NULL">NULL</option>
+                                                {% else %}
+                                                    <option value="NULL">NULL</option>
+                                                {% endif %}
+                                            </select>
+                                            {#                            <input  type=="text" maxlength="20" value="{{ data.status }}" placeholder="input status here" name="status"> ('executed','executed failed','check not passed','check passed','running','appointed','NULL')#}
+                                        </td>
+                                    {% else %}
+                                        <td width="40%">{{ data.status }}</td>
+                                    {% endif %}
+                                    <td width="10%">是否需要备份执行</td>
+                                    <td width="40%">
+                                        <select class="form-control" name="ifbackup" style="height: 30px">
+                                            {% if data.backup_status == 1 %}
+                                                <option value=1 selected="selected">需要备份</option>
+                                                <option value=0>不需要备份</option>
+                                                <option value=2>已备份执行</option>
+                                            {% elif  data.backup_status == 0 %}
+                                                <option value=1>需要备份</option>
+                                                <option value=0 selected="selected">不需要备份</option>
+                                                <option value=2>已备份执行</option>
+                                            {% elif  data.backup_status == 2 %}
+                                                <option value=1>需要备份</option>
+                                                <option value=0>不需要备份</option>
+                                                <option value=2 selected="selected">已备份执行</option>
+                                            {% endif %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="10%">SQL语句</td>
+                                    {% if perms.myapp.can_update_task or perms.myapp.can_admin_task %}
+                                        <td width="40%"><textarea cols="40" rows="10" name="sqltext"
+                                                                  style="width: 80%">{{ data.sqltext }}</textarea></td>
+                                    {% else %}
+                                        <td width="40%">{{ data.sqltext }}</td>
+                                    {% endif %}
+                                    <td width="10%">执行说明</td>
+                                    {% if perms.myapp.can_update_task or perms.myapp.can_admin_task %}
+                                        <td width="40%"><textarea cols="40" rows="10" maxlength="30"
+                                                                  placeholder="最多输入30个字，超过部分将会被截断"
+                                                                  name="specify">{{ data.specification }}</textarea>
+                                        </td>
+                                    {% else %}
+                                        <td width="40%">{{ data.specification }}</td>
+                                    {% endif %}
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                {% if perms.myapp.can_update_task or perms.myapp.can_admin_task %}
+                                    <button type="submit" name='update' onclick="return confirm('PLEASE COMFIRM')"
+                                            class="btn btn-warning">更新sql相关信息
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+{% endblock %}
+

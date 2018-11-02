@@ -1,0 +1,155 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>数据库元数据比对</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-file-text"></i>MySQL</a></li>
+                <li class="active"><i class="fa fa-adjust"></i>数据库元数据比对</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>数据库元数据比对</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Database MetaData Compare</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">比对库数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host0 %}
+                                    <select class="form-control" name="dbhost0" style="width: 200px">
+                                        {% for obj in  objlist0 %}
+                                            {% if obj == choosed_host0 %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <select class="form-control" name="dbhost0" style="width: 200px">
+                                        {% for obj in objlist0 %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">参照数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host1 %}
+                                    <select class="form-control" name="dbhost1" style="width: 200px">
+
+                                        {% for obj in  objlist1 %}
+                                            {% if obj == choosed_host1 %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select></br>
+                                {% else %}
+                                    <select class="form-control" name="dbhost1" style="width: 200px">
+                                        {% for obj in objlist1 %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">进行后台比对</label>
+                            <div class="col-md-6 col-xs-11">
+                                <button type="submit" name='db_compare' class="bk-margin-5 btn btn-primary" value="1">
+                                    对比结构
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label">查询比对结果</label>
+                            <div class="col-md-6 col-xs-11">
+                                <button type="submit" name='db_search' class="btn btn-info" value="1">查询结果</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+               <div class="panel-body">
+                        <div class="table-responsive">
+                            {% include "include/pagejump/pagebutton.html" %}
+                            {% if list_result %}
+                                <table id="mytable"
+                                       class="table table-bordered table-striped table-condensed table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>序号</th>
+                                        <th>类型</th>
+                                        <th>比对库数据库</th>
+                                        <th>表名</th>
+                                        <th>参照数据库</th>
+                                        <th>表名</th>
+                                        <th>差异内容</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in list_result %}
+                                        <tr>
+                                            <td> {{ item.row_number }}</td>
+                                            <td> {{ item.stype }}</td>
+                                            <td> {{ item.host0 }}</td>
+                                            <td> {{ item.item0 }}</td>
+                                            <td> {{ item.host1 }}</td>
+                                            <td> {{ item.item1 }}</td>
+                                            <td> {{ item.result|linebreaks }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            {% endif %}
+                        </div>
+                    </div>
+            </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+{% endblock %}

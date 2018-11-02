@@ -1,0 +1,86 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>密码重置</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li class="active"><i class="fa fa-life-bouy"></i>密码重置</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>密码重置</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Reset Password</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <input id="id_passwd" type="password" class="form-control" maxlength="25" placeholder="type new password here" name="passwd" onkeydown="clearstage()">
+                            <input id="id_repasswd" type="password" class="form-control" maxlength="25" placeholder="retype password here" name="repasswd" onkeydown="clearstage()" >
+                             <div class="col-md-6">
+                                 <button id="id_button" type="submit" name='set' onclick="return checkPass();"  class="btn btn-danger" >重置</button>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        function clearstage() {
+            document.getElementById("errorpwd").innerText = "";
+
+        }
+
+        function checkPass() {
+            var pwd1 = document.getElementById("id_passwd").value;
+            var pwd2 = document.getElementById("id_repasswd").value;
+            if (pwd1.length < 8) {
+                document.getElementById("errorpwd").innerText = "密码长度至少8位";
+                return false;
+            }
+            if (pwd1 != pwd2) {
+                document.getElementById("errorpwd").innerText = "两次密码输入不一致";
+                return false;
+            }
+            return true;
+        }
+
+        {#        function checksame() {#}
+        {#            var pwd1 = document.getElementById("id_passwd").value;#}
+        {#            var pwd2 = document.getElementById("id_repasswd").value;#}
+        {##}
+        {#            if (pwd1 != pwd2 && pwd1.length != 0) {#}
+        {#                document.getElementById("errorpwd").innerText = "两次输入密码不一致";#}
+        {#            }#}
+        {#            else#}
+        {#            {#}
+        {#                document.getElementById("errorpwd").innerText = "";#}
+        {#            }#}
+        {#        }#}
+
+
+    </script>
+{% endblock %}

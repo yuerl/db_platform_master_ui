@@ -1,0 +1,193 @@
+{% load staticfiles %}
+<div class="sidebar">
+    <div class="sidebar-collapse">
+        <!-- Sidebar Header Logo-->
+        <div class="sidebar-header">
+            <img src="{% static 'assets/img/logo.png' %}" class="img-responsive" alt=""/>
+        </div>
+        <!-- Sidebar Menu-->
+        <div class="sidebar-menu">
+            <nav id="menu" class="nav-main" role="navigation">
+                <ul class="nav nav-sidebar">
+                    <div class="panel-body text-center">
+                        <div class="bk-avatar">
+                            <img src="{% static 'assets/img/avatar.jpg' %}" class="img-circle bk-img-60" alt=""/>
+                        </div>
+                        <div class="bk-padding-top-10">
+                            <i class="fa fa-circle text-success"></i>
+                            <small>{{ request.user.username }}</small>
+                        </div>
+                    </div>
+                    <div class="divider2"></div>
+                    <li class="active">
+                        <a href="{% url 'index' %}">
+                            <i class="fa fa-laptop" aria-hidden="true"></i><span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-database" aria-hidden="true"></i><span>MySQL</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            <li><a href="{% url 'meta_data' %}"><span class="text"> 表结构查询</span></a></li>
+                            <li><a href="{% url 'mysql_diff' %}"><span class="text"> 数据库比对</span></a></li>
+                            <li><a href="{% url 'diff' %}"><span class="text"> 表结构比对</span></a></li>
+                            <li><a href="{% url 'mysql_query' %}"><span class="text"> MySQL_SELECT执行</span></a></li>
+                            <li><a href="{% url 'inception_dml' %}"><span class="text">DML执行(自动备份)</span></a></li>
+                            <li><a href="{% url 'inception' %}"><span class="text"> DML&DDL执行(权限审核)</span></a></li>
+                            <li><a href="{% url 'mysql_exec' %}"><span class="text">MySQL_EXEC(直接执行)</span></a></li>
+
+                        </ul>
+                    </li>
+                 <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-dedent" aria-hidden="true"></i><span>MongoDB</span>
+                        </a>
+                        <ul class="nav nav-children">
+                             <li><a href="{% url 'mongodb_query' %}"><span class="text">MongoDB查询</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-reddit" aria-hidden="true"></i><span>Redis</span>
+                        </a>
+                        <ul class="nav nav-children">
+                             <li><a href="{% url 'redis_query' %}"><span class="text">Redis查询</span></a></li>
+{#                             <li><a href="{% url 'redis_command' %}"><span class="text">Redis操作</span></a></li>#}
+                        </ul>
+                    </li>
+{#                    <li class="nav-parent">#}
+{#                        <a>#}
+{#                            <i class="fa fa-check" aria-hidden="true"></i><span>数据模板</span>#}
+{#                        </a>#}
+{#                        <ul class="nav nav-children">#}
+{#                            <li><a href="{% url 'template_mgr' %}"><span class="text"> 模板管理</span></a></li>#}
+{#                            <li><a href="{% url 'template_dmldata' %}"><span class="text">数据处理</span></a></li>#}
+{#                            <li><a href="{% url 'mysql_query' %}"><span class="text">数据任务管理</span></a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+                    <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-list-alt" aria-hidden="true"></i><span>脚本管理</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            <li><a href="{% url 'script_project_mgr' %}"><span class="text"> 项目管理</span></a></li>
+                            <li><a href="{% url 'script_upload' %}"><span class="text"> 脚本检测提交</span></a></li>
+                            <li><a href="{% url 'script_check_mgr' %}"><span class="text"> 脚本修改</span></a></li>
+                            <li><a href="{% url 'script_task_mgr' %}"><span class="text">脚本执行管理</span></a></li>
+                            <li><a href="{% url 'script_task_mgr_db' %}"><span class="text">DB脚本库同步</span></a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-random" aria-hidden="true"></i><span>DB管理</span>
+                        </a>
+                        <ul class="nav nav-children">
+{#                            <li><a href="{% url 'task_manager' %}"><span class="text"> 任务管理</span></a></li>#}
+                            {#											<li><a href="{% url 'mysql_admin' %}"><span class="text">实例状态查询</span></a></li>#}
+                            {#											<li><a href="{% url 'tb_check' %}"><span class="text">元数据查询</span></a></li>#}
+                            {#                                            <li><a href="{% url 'dupkey_check' %}"><span class="text">重复索引检查</span></a></li>#}
+
+                            {#                                            <li><a href="{% url 'mon_set' %}"><span class="text">MySQL监控</span></a></li>#}
+                            <li><a href="{% url 'mon_mysql_mgr' %}"><span class="text">MySQL监控主机维护</span></a></li>
+                            <li><a href="{% url 'binlog_parse' %}"><span class="text">BINLOG解析</span></a></li>
+                            <li><a href="{% url 'log_query' %}"><span class="text"></span><span>日志查询</span></a></li>
+                            <li><a href="{% url 'mysql_dashbord' %}"><span class="text">MySQL Dashboard</span></a></li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'task_manager' %}">
+                            <i class="fa fa-tasks" aria-hidden="true"></i><span>任务管理</span>
+                        </a>
+                    </li>
+{#                    <li><a href="{% url 'task_manager' %}"><span class="text"> 任务管理</span></a></li>#}
+
+
+{#                    <li class="nav-parent">#}
+{#                        <a>#}
+{#                            <i class="fa fa-ambulance" aria-hidden="true"></i><span>报表管理</span>#}
+{#                        </a>#}
+{#                        <ul class="nav nav-children">#}
+{#                             <li><a href="{% url 'rpt_sql' %}"><span class="text">SQL配置</span></a></li>#}
+{#                            <li><a href="{% url 'task_manager' %}"><span class="text">任务管理</span></a></li>#}
+{#                            <li><a href="{% url 'binlog_parse' %}"><span class="text">邮件配置</span></a></li>#}
+{#                            <li><a href="{% url 'mon_mysql_mgr' %}"><span class="text">日志查询</span></a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+                    <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-chain" aria-hidden="true"></i>
+                            <span>权限管理</span>
+                        </a>
+                        <ul class="nav nav-children">
+                            {% if perms.myapp.can_set_pri or perms.myapp.can_query_pri %}
+                                <li><a href="{% url 'pre_query' %}"><span class="text"> 权限查询</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_set_pri %}
+                                <li><a href="{% url 'pre_set' %}"><span class="text">用户账户</span></a></li>
+                                <li><a href="{% url 'user_detail_set' %}"><span class="text">用户资料明细</span></a></li>
+
+                                {#											<li><a href="{% url 'fast_dbset' %}"><span class="text">快速创建DB</span></a></li>#}
+                                {#                                            <li role="presentation" class="divider"></li>#}
+                                <li><a href="{% url 'set_dbname' %}"><span class="text">设置DB</span></a></li>
+                                <li><a href="{% url 'set_blist' %}"><span class="text"> 设置黑名单表</span></a></li>
+                                {#                                            <li role="presentation" class="divider"></li>#}
+                                <li><a href="{% url 'set_ugroup' %}"><span class="text"> 设置USER_GROUP</span></a></li>
+                                <li><a href="{% url 'set_dbgroup' %}"><span class="text"> 设置DB_GROUP</span></a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {#									<li>#}
+                    {#										<a href="widgets.html">#}
+                    {#											<i class="fa fa-life-bouy" aria-hidden="true"></i><span>Widgets</span>#}
+                    {#										</a>#}
+                    {#									</li>#}
+                    {#									<li>#}
+                    {#										<a href="typography.html">#}
+                    {#											<i class="fa fa-font" aria-hidden="true"></i><span>Typography</span>#}
+                    {#										</a>#}
+                    {#									</li>#}
+                    {#									<li class="nav-parent">#}
+                    {#										<a>#}
+                    {#											<i class="fa fa-bolt" aria-hidden="true"></i><span>Icons</span>#}
+                    {#										</a>#}
+                    {#										<ul class="nav nav-children">#}
+                    {#											<li><a href="icons-font-awesome.html"><span class="text"> Font Awesome</span></a></li>#}
+                    {#											<li><a href="icons-weathericons.html"><span class="text"> Weather Icons</span></a></li>#}
+                    {#											<li><a href="icons-glyphicons.html"><span class="text"> Glyphicons</span></a></li>#}
+                    {#										</ul>#}
+                    {#									</li>#}
+                    {#									<li>#}
+                    {#										<a href="gallery.html">#}
+                    {#											<i class="fa fa-picture-o" aria-hidden="true"></i><span>Gallery</span>#}
+                    {#										</a>#}
+                    {#									</li>#}
+                    {#									<li>#}
+                    {#										<a href="calendar.html">#}
+                    {#											<i class="fa fa-calendar" aria-hidden="true"></i><span>Calendar</span>#}
+                    {#										</a>#}
+                    {#									</li>#}
+                </ul>
+            </nav>
+        </div>
+        <!-- End Sidebar Menu-->
+    </div>
+    <!-- Sidebar Footer-->
+    <div class="sidebar-footer">
+        <ul class="sidebar-terms">
+            <li><a href="{% url 'index' %}">Terms</a></li>
+            <li><a href="{% url 'index' %}">Privacy</a></li>
+            <li><a href="{% url 'index' %}">Help</a></li>
+            <li><a href="{% url 'index' %}">About</a></li>
+        </ul>
+        <div class="copyright text-center">
+            <small><i class="fa fa-coffee"> </i><a href="http://blog.csdn.net/liangliangsmd" title="数据库管理"
+                                                   target="_blank">数据库管理</a> - By YueRenliang <a
+                    href="http://blog.csdn.net/liangliangsmd" target="_blank" title="Database Management">Database
+                Management</a></small>
+        </div>
+    </div>
+    <!-- End Sidebar Footer-->
+</div>

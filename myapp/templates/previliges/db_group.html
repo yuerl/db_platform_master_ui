@@ -1,0 +1,165 @@
+{% extends "include/base.html" %}
+{% load staticfiles %}
+{% block title %}
+    <title>设置DB_GROUP</title>
+
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-briefcase"></i>权限管理</a></li>
+                <li class="active"><i class="fa fa-align-left"></i>设置DB_GROUP</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>设置DB_GROUP</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>DB_GROUP Setting Management</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                {% if dbgrouplist %}
+                                    <strong>CHOOSE GROUP</strong> </br>
+                                    <select class="form-control col-md-1" name="dbgroup_set">
+                                        {% for obj in dbgrouplist %}
+                                            {% if obj.groupname == groupname %}
+                                                <option selected="selected"
+                                                        value="{{ obj.groupname }}">{{ obj.groupname }}</option>
+                                            {% else %}
+                                                <option value="{{ obj.groupname }}">{{ obj.groupname }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='query' class="btn btn-primary">查询</button>
+                                <button type="submit" name='set' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-danger">设置
+                                </button>
+                                <button type="submit" name='delete' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-success">删除
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <div class="col-md-6">
+                                    <strong>CREATE & SET</strong> </br>
+                                    {% if groupname %}
+                                        <input type=="text" class="form-control" maxlength="30" value="{{ groupname }}"
+                                               placeholder="input name here" name="newname">
+
+                                    {% else %}
+                                        <input type=="text" class="form-control" maxlength="30"
+                                               placeholder="input name here" name="newname">
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='create' onclick="return confirm('PLEASE COMFIRM')"
+                                        class="btn btn-info">创建
+                                </button>
+                            </div>
+                        </div>
+                        {% if info %}
+                            <strong> <span style="color:red">{{ info }}</span></strong>
+                        {% endif %}
+                    </div>
+
+
+                </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>CHOOSE USER</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            {% if userlist %}
+                                <select class="form-control col-md-1" size="10" multiple="multiple" name="user_set">
+                                    {% for obj in userlist %}
+                                        {% if obj.username == public_user %}
+                                        {% else %}
+                                            {% if obj in s_userlist %}
+                                                <option selected="selected"
+                                                        value="{{ obj.username }}">{{ obj.username }}</option>
+                                            {% else %}
+                                                <option value="{{ obj.username }}">{{ obj.username }}</option>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>CHOOSE DB</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <div class="row">
+                                {% if dbnamelist %}
+                                    <select class="form-control col-md-1" size="10" multiple="multiple"
+                                            name="dbname_set">
+                                        {% for obj in dbnamelist %}
+                                            {% if obj in s_dbnamelist %}
+                                                <option selected="selected"
+                                                        value="{{ obj.dbtag }}">{{ obj.dbtag }}</option>
+                                            {% else %}
+                                                <option value="{{ obj.dbtag }}">{{ obj.dbtag }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

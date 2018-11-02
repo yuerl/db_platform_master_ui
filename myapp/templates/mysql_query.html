@@ -1,0 +1,216 @@
+{% extends "include/base.html" %}
+{% block title %}
+    <title>MySQL_SELECT执行</title>
+{% endblock %}
+{% block content %}
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="pull-left">
+            <ol class="breadcrumb visible-sm visible-md visible-lg">
+                <li><a href="{% url 'index' %}"><i class="icon fa fa-home"></i>Home</a></li>
+                <li><a href="#"><i class="fa fa-file-text"></i>MySQL</a></li>
+                <li class="active"><i class="fa fa-ambulance"></i>MySQL_SELECT执行</li>
+            </ol>
+        </div>
+        <div class="pull-right">
+            <h2>MySQL_SELECT执行</h2>
+        </div>
+    </div>
+    <!-- End Page Header -->
+
+    <div class="row">
+        <form class="form-horizontal" role="form" method="post">
+            {% csrf_token %}
+            <div class="col-lg-12">
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>MySQL Query</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">选择数据库</label>
+                            <div class="col-md-6">
+                                {% if choosed_host %}
+                                    <select   onchange="Change1()"  class="form-control col-md-1" name="cx">
+                                        {% for obj in objlist %}
+                                            {% if obj == choosed_host %}
+                                                <option selected="selected" value="{{ obj }}">{{ obj }}</option>
+                                            {% else %}
+                                                <option value="{{ obj }}">{{ obj }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select></br>
+                                    <a href="/mysql_query/"><input type="button" value="刷新数据源"
+                                                                   class="btn btn-danger"></a>
+                                {% else %}
+                                    <select class="form-control col-md-1" name="cx">
+                                        {% for obj in objlist %}
+                                            <option value="{{ obj }}">{{ obj }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        </div>
+{#                        <div class="form-group">#}
+{#                            <label class="col-xs-1 control-label">表和字段</label>#}
+{#                            <div class="col-md-6">#}
+{#                                <select onchange="Change1()" id="dbid1" class="form-control col-md-1" title="选择比对库"#}
+{#                                        name="choosedb1" style="width: 200px">#}
+{#                                    <option value="">----------</option>#}
+{#                                    {% for obj in objlist %}#}
+{#                                        {% if obj == choosed_host1 %}#}
+{#                                            <option selected="selected" value="{{ obj }}">{{ obj }}</option>#}
+{#                                        {% else %}#}
+{#                                            <option value="{{ obj }}">{{ obj }}</option>#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+{#                                <select onchange="Change2()" id="column1" class="form-control col-md-1" title="选择比对表" name="choosetb1"#}
+{#                                        style="width: 200px">#}
+{#                                    {% if choosed_tb1 %}#}
+{#                                        <option selected="selected" value="{{ choosed_tb1 }}">{{ choosed_tb1 }}</option>#}
+{##}
+{#                                    {% else %}#}
+{#                                        <option selected="selected" value="">----------</option>#}
+{#                                    {% endif %}#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+                        <div class="form-group">
+                            <label class="col-xs-1 control-label">库名</label>
+                            <div class="col-md-6">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        {% if db_se %}
+                                            <input type=="text" class="form-control" maxlength="30"
+                                                   placeholder="input dbname for search" value="{{ db_se }}"
+                                                   name="searchdbname">
+                                        {% else %}
+                                            <input type=="text" class="form-control" maxlength="30"
+                                                   placeholder="input dbname for search" name="searchdbname">
+                                        {% endif %}
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" name='searchdb' class="bk-margin-5 btn btn-primary"
+                                                value="1">搜索库
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="form-group">
+                            {#                            <label class="col-lg-2 col-md-2 col-sm-12 control-label">SQL To Run</label>#}
+                            <div class="col-lg-10 col-md-10">
+                                {{ form.a }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-md-10">
+                                <button type="submit" name='query' class="btn btn-primary" value="1">提交查询</button>
+                                <button type="submit" name='explain' class="btn btn-info" value="1">查看执行计划</button>
+                                {% if perms.myapp.can_export %}
+                                    <button type="submit" name='export' class="btn btn-warning" value="1">导出CSV</button>
+                                {% endif %}
+                                <button type="submit" name='sqladvice' class="btn btn-danger" value="1">查询sqladvisor
+                                </button>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="panel">
+                    <div class="panel-heading bk-bg-primary">
+                        <h6><i class="fa fa-indent red"></i>Data List</h6>
+                        <div class="panel-actions">
+                            <a href="form-elements.html#" class="btn-setting"><i
+                                    class="fa fa-rotate-right black"></i></a>
+                            <a href="form-elements.html#" class="btn-minimize"><i
+                                    class="fa fa-chevron-up black"></i></a>
+                            <a href="form-elements.html#" class="btn-close"><i class="fa fa-times black"></i></a>
+                        </div>
+                    </div>
+                    <div class="panel-body" style="overflow:auto">
+                        <div class="table-responsive">
+                            {% include "include/pagejump/pagebutton.html" %}
+                            {% if blacktb %}
+                                </br>
+                                <strong><span style="color:red">
+{#                {% for item in blacktb %}#}
+                    {{ blacktb }} &nbsp;
+{#                {% endfor %}#}
+                </span>
+                                    </br>
+                                    语句中包含以上被限制查询的表，请联系平台管理人员
+                                </strong>
+                            {% endif %}
+                            {% if advice %}
+                                <table>
+                                    <th> ADVICE:</th>
+                                    <tr>
+                                        <td>
+                                            <pre>  {{ advice|linebreaksbr }}</pre>
+                                        </td>
+                                    </tr>
+                                </table>
+                            {% endif %}
+                            {% if collist %}
+                                <table class="table table-bordered table-striped table-condensed table-hover">
+                                    <tr>
+                                        QUERY IN:{{ dbname }}
+                                    </tr>
+                                    <tr>
+                                        {% if a %}
+                                            {#                                {{ a|linebreaks }}#}
+                                            {{ a|truncatechars:100|linebreaks }}
+                                        {% endif %}
+                                    </tr>
+                                </table>
+                                {#                    {% include "include/pagejump/pagebutton.html" %}#}
+
+                                <table
+                                        class="table table-bordered table-striped table-condensed table-hover">
+                                    <thead>
+                                    <tr>
+                                        {% for colname in collist %}
+                                            <th>{{ colname }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in data_list %}
+                                        <tr>
+                                            {% for item_detail in item %}
+                                                <td>
+                                                    {{ item_detail }}
+                                                </td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+{% block script %}
+    {% include "include/pagejump/pagejump.html" %}
+{% endblock %}
