@@ -1,7 +1,7 @@
 
 # Database_Management
 详情加入QQ群讨论：572929520
-1、【Mysql】
+1、Mysql
 表结构查询
 数据库比对
 表结构对比
