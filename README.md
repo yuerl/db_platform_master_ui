@@ -4,16 +4,16 @@ inception参考网址
 http://www.ywnds.com/?p=9423
 
 1、基础组件安装
-1、yum install gcc gcc-c++ cmake  openssl-devel ncurses-devel MySQL-python –y
+yum install gcc gcc-c++ cmake  openssl-devel ncurses-devel MySQL-python –y
 yum install mailcap
 
-1.下载并安装一个M4包
+下载并安装一个M4包
 [plain] view plain copy
-#wget -O m4-1.4.9.tar.gz http://ftp.gnu.org/gnu/m4/m4-1.4.9.tar.gz  
-2.下载完成后解压
+wget -O m4-1.4.9.tar.gz http://ftp.gnu.org/gnu/m4/m4-1.4.9.tar.gz  
+下载完成后解压
 [plain] view plain copy
 #tar -zvxf m4-1.4.9.tar.gz && cd m4-1.4.9  
-3.编译并安装
+编译并安装
 [plain] view plain copy
 #./configure && make && make install 
 
@@ -54,8 +54,6 @@ inception_osc_bin_dir=pt-online-schema得位置 要装Data-Dumper(百度网盘�
 inception_osc_chunk_time=0.1
 inception_enable_blob_type=1
 inception_check_column_default_value=1
-
-
 
 -----------------------------------------------------------------------------------------------------
 [inception]
