@@ -63,20 +63,28 @@ path_mysqldiff = config.path_to_mysqldiff
 script_dir=config.script_dir
 mysql_bin=config.mysql_bin
 
+def return_dbscriptdir():
+    return script_dir
+
 def makescripts(proid):
 #mgr
   try:
     stime=datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     data_pro=get_pro_data_byid(proid)
     data_detail=get_pro_mgr_by_proid(proid)
-    filename=data_pro[0].prono+"as"+stime+".sql"
+    filename=data_pro[0].prono+"_time"+stime+".sql"
     log = mylibs.MyLibs_logs(script_dir + '/', filename)
+    log.log_write(str="-- time:" + stime + "\n")
+    log.log_write(str="-- project_no:" + data_pro[0].prono + " project_name:"+data_pro[0].proname + "\n")
+    log.log_write(str="-- manager:" +  data_pro[0].mgr_user + "\n")
     for item in data_detail:
-        log.log_write(str="#"+item.sql_memo+"\n")
-        log.log_write(str=item.sqltext + "\n")
-    return   filename
+        log.log_write(str="-- memo:"+str(item[0])+" operator:"+str(item[1])+"\n")
+        log.log_write(str=str(item[2]) + "\n")
+    #更新数据库脚本名称根据proid
+    modify_promemo(proid,filename)
+    return  filename
   except Exception, e:
-    return  "failed to create file"
+    return   "failed to create file"
 #mgr detail
 
 #
@@ -306,6 +314,111 @@ def get_mysql_hostlist(username,tag='tag',search=''):
 
 
 
+#获取下拉菜单列表
+def get_mysql_oracle_hostlist(username,tag='tag',search=''):
+    host_list = []
+    if len(search) ==0:
+        if (tag=='tag'):
+            a = User.objects.get(username=username)
+            for row in a.db_name_set.filter(db_account__role__in=['read','all']).filter(
+                    instance__role__in=['read','all']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').distinct().order_by("dbtag"):
+
+                host_list.append(row['dbtag'])
+        elif (tag=='log'):
+            # print Db_name.objects.values('dbtag').query;
+            for row in Db_name.objects.values('dbtag').distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag=='exec'):
+            a = User.objects.get(username=username)
+            #如果没有对应role='write'或者role='all'的account账号，则不显示在下拉菜单中
+            # for row in a.db_name_set.all().order_by("dbtag"):
+            #     if row.db_account_set.all().filter(role__in=['write','all']):
+            # #排除只读实例
+            #         if row.instance.all().filter(role__in=['write','all']).filter(db_type=dbtype):
+            #             host_list.append(row.dbtag)
+
+            for row in a.db_name_set.filter(db_account__role__in=['write', 'all']).filter(
+                    instance__role__in=['write', 'all']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').all().distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag == 'incept'):
+            a = User.objects.get(username=username)
+            # for row in a.db_name_set.all().order_by("dbtag"):
+            #     #find the account which is admin
+            #     if row.db_account_set.all().filter(role='admin'):
+            #         if row.instance.all().filter(role__in=['write','all']).filter(db_type=dbtype):
+            #         #if row.instance.all().exclude(role='read'):
+            #             host_list.append(row.dbtag)
+            for row in a.db_name_set.filter(db_account__role='admin').filter(
+                    instance__role__in=['write', 'all']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').all().distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag == 'meta'):
+            # print Db_name.objects.filter(db_account__role='admin').filter(
+            #     instance__role__in=['write', 'all', 'read']).filter(instance__db_type=dbtype).values(
+            #     'dbtag').all().query
+            for row in Db_name.objects.filter(db_account__role='admin').filter(
+                    instance__role__in=['write', 'all','read']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').all().distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+
+
+    elif len(search) > 0:
+        if (tag=='tag'):
+            a = User.objects.get(username=username)
+            #如果没有对应role='read'或者role='all'的account账号，则不显示在下拉菜单中
+            # for row in a.db_name_set.filter(dbname__contains=search).order_by("dbtag"):
+            #     if row.db_account_set.all().filter(role__in=['read','all']):
+            #         if row.instance.all().filter(role__in=['read','all']).filter(db_type=dbtype):
+            #             host_list.append(row.dbtag)
+            for row in a.db_name_set.filter(dbname__contains=search).filter(db_account__role__in=['read', 'all']).filter(
+                    instance__role__in=['read', 'all']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag=='log'):
+            for row in Db_name.objects.values('dbtag').distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag=='exec'):
+            a = User.objects.get(username=username)
+            #如果没有对应role='write'或者role='all'的account账号，则不显示在下拉菜单中
+            # for row in a.db_name_set.filter(dbname__contains=search).order_by("dbtag"):
+            #     if row.db_account_set.all().filter(role__in=['write','all']):
+            # #排除只读实例
+            #         if row.instance.all().filter(role__in=['write','all']).filter(db_type=dbtype):
+            #             host_list.append(row.dbtag)
+            for row in a.db_name_set.filter(dbname__contains=search).filter(db_account__role__in=['write', 'all']).filter(
+                    instance__role__in=['write', 'all']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').all().distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag == 'incept'):
+            a = User.objects.get(username=username)
+            # for row in a.db_name_set.filter(dbname__contains=search).order_by("dbtag"):
+            #     #find the account which is admin
+            #     if row.db_account_set.all().filter(role='admin'):
+            #         if row.instance.all().filter(role__in=['write','all']).filter(db_type=dbtype):
+            #         #if row.instance.all().exclude(role='read'):
+            #             host_list.append(row.dbtag)
+            for row in a.db_name_set.filter(dbname__contains=search).filter(db_account__role='admin').filter(
+                    instance__role__in=['write', 'all']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').all().distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+        elif (tag == 'meta'):
+            # for row in Db_name.filter(dbname__contains=search).order_by("dbtag"):
+            #     #find the account which is admin
+            #     if row.db_account_set.all().filter(role='admin'):
+            #         if row.instance.filter(role__in=['write','all','read']).filter(db_type=dbtype):
+            #             host_list.append(row.dbtag)
+            '''print Db_name.objects.filter(dbname__contains=search).filter(db_account__role='admin').filter(
+                    instance__role__in=['write', 'all','read']).filter(instance__db_type=dbtype).values(
+                    'dbtag').all().query;'''
+            for row in Db_name.objects.filter(dbname__contains=search).filter(db_account__role='admin').filter(
+                    instance__role__in=['write', 'all','read']).filter(instance__db_type__in=['mysql','Oracle']).values(
+                    'dbtag').all().distinct().order_by("dbtag"):
+                host_list.append(row['dbtag'])
+
+    return host_list
+
 
 
 def get_op_type(methods='get'):
@@ -434,7 +547,7 @@ def check_mysql_query(sqltext,user,type='select'):
         except Exception, e:
             num = select_limit
     num=str(num)
-    limit = ' limit '+ num
+    limit = ' limit ' + num
 
     sqltext = sqltext.strip()
     sqltype = sqltext.split()[0].lower()
@@ -617,11 +730,20 @@ def get_pro_list_cm():
     return datalist
 
 
+
 def get_pro_list_cm():
     datalist = Pro_mgr.objects.values('id', 'prono', 'proname').filter(
         status__in=['created', 'modified','finished']).order_by("-create_time")[0:100]
     return datalist
 
+#返回数据库的类型是mysql\oracle\redis\mongodb
+def get_dbtype_bydbtag(dbtag):
+    with connection.cursor() as cursor:
+        sql_str="SELECT c.db_type,a.dbname FROM myapp_db_name a JOIN myapp_db_name_instance b ON a.id=b.db_name_id  JOIN myapp_db_instance c ON b.db_instance_id=c.id WHERE a.dbtag=%s  LIMIT 1"
+        cursor.execute(sql_str,[dbtag])
+        row = cursor.fetchall()
+    cursor.close()
+    return row
 
 def create_pro(prono,proname,user_mgr,status,user,createtime,stage_mgr,stage_time):
     if len(prono)>0 and len(proname)>0:
@@ -646,6 +768,11 @@ def modify_pro(id,prono,proname,user_mgr,status,stage_mgr,stage_time):
         obj.status = status
         obj.stage=stage_mgr
         obj.stage_time=stage_time
+        obj.save()
+def modify_promemo(id,memo):
+    if len(id)>0:
+        obj = Pro_mgr.objects.get(id=id)
+        obj.memo=memo
         obj.save()
 
 def modify_template(id,templteno,templtename,templtememo,create_user,sqltext,templtestatus):
@@ -688,6 +815,11 @@ def get_pro_data_byid(id):
     return datalist
 def get_pro_mgr_by_detailid(id):
     if len(id)>0:
+        # with connection.cursor() as cursor:
+        #     sql_str = "SELECT a.`sql_memo`,a.`operator`,a.`sqltext` FROM  myapp_pro_mgr_detail a  where a.pro_id_id=%s and  a.`detail_id` not in (select id from myapp_pro_mgr_detail where pro_id_id=%s)"
+        #     cursor.execute(sql_str, [id,id])
+        #     row = cursor.fetchall()
+        # cursor.close()
         # create_time, dbtag, id, operator, pro_id, pro_id_id, sche_time, sql_memo, sqlsha, sqltext, status, update_time, user
         datalist = Pro_mgr_detail.objects.filter(id=id)
         return  datalist;
@@ -696,10 +828,17 @@ def get_pro_mgr_by_detailid(id):
 def get_pro_mgr_by_proid(pro_id):
     if len(pro_id)>0:
         # create_time, dbtag, id, operator, pro_id, pro_id_id, sche_time, sql_memo, sqlsha, sqltext, status, update_time, user
-        datalist = Pro_mgr_detail.objects.filter(pro_id=pro_id)
-        return  datalist;
-    else:
-        return "";
+    #     datalist = Pro_mgr_detail.objects.filter(pro_id=pro_id).filter(pro_id__stage='pro')
+    #     return  datalist;
+    # else:
+    #     return "";
+        with connection.cursor() as cursor:
+            sql_str = "SELECT a.`sql_memo`,a.`operator`,a.`sqltext` FROM  myapp_pro_mgr_detail a  where a.pro_id_id=%s and  a.`detail_id` not in (select id from myapp_pro_mgr_detail where pro_id_id=%s)"
+            cursor.execute(sql_str, [pro_id, pro_id])
+            row = cursor.fetchall()
+            cursor.close()
+        return row
+
 
 def delete_pro_mgr_by_detailid(id):
     if len(id)>0:
@@ -858,6 +997,8 @@ def check_mysql_exec(sqltext,request,type='dml'):
             return "select 'Don\\'t have permission to \"alter\"'"
     else:
         return wrong_msg
+
+
 
 def run_mysql_exec(hosttag,sql,useraccount,request):
     #确认dbname
@@ -1237,8 +1378,7 @@ def mysql_blacklist_tb(sql,username,dbtag):
             else:
                 return 0, ""
     cursor.close()
-    return row
-
+    return 0, ""
 
 
 #插入

@@ -253,6 +253,11 @@
                                                 {% else %}
                                                     <option value="mysql" selected="selected">MySQL</option>
                                                 {% endif %}
+                                                {% if insname.db_type == "Oracle" %}
+                                                    <option value="Oracle" selected="selected">Oracle</option>
+                                                {% else %}
+                                                    <option value="Oracle">Oracle</option>
+                                                {% endif %}
                                                 {% if insname.db_type == "mongodb" %}
                                                     <option value="mongodb" selected="selected">Mongodb</option>
                                                 {% else %}

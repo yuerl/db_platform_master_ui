@@ -6,9 +6,10 @@ import pyredis
 from django.contrib.auth.decorators import login_required,permission_required
 from myapp.include import function as func
 
+
 # Create your views here.
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_redisdb_query', login_url='/')
+@permission_required('myapp.can_see_redis_menu_redis_query', login_url='/')
 def redis_query(request):
     try:
         favword = request.COOKIES['myfavword']

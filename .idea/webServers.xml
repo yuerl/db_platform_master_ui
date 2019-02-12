@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="dd53746e-f742-46ff-86dc-ce9d91acf90b" name="sftp" url="http://192.168.188.211:8000">
-        <fileTransfer host="192.168.188.211" port="22" rootFolder="/opt/dev" accessType="SFTP">
+      <webServer id="dd53746e-f742-46ff-86dc-ce9d91acf90b" name="sftp" url="http://10.0.10.156:8000">
+        <fileTransfer host="10.0.10.156" port="22" rootFolder="/opt/dbmgr/nojira" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />
           </advancedOptions>

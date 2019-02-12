@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys,json,os,datetime,csv,time
+from django.http import FileResponse
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
@@ -70,7 +71,7 @@ def logout(request):
     return response
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_log_query', login_url='/')
+@permission_required('myapp.can_see_dbmgr_menu_log_query', login_url='/')
 def log_query(request):
     #show every dbtags
     #obj_list = func.get_mysql_hostlist(request.user.username,'log')
@@ -96,7 +97,7 @@ def log_query(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_mysql_query', login_url='/')
+@permission_required('myapp.can_see_mysql_menu_mysql_query', login_url='/')
 def mysql_query(request):
     #print request.user.username
     # print request.user.has_perm('myapp.can_mysql_query')
@@ -306,7 +307,7 @@ def some_streaming_csv_view(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_execview', login_url='/')
+@permission_required('myapp.can_see_mysql_menu_mysql_exec', login_url='/')
 def mysql_exec(request):
     try:
         favword = request.COOKIES['myfavword']
@@ -380,7 +381,7 @@ def mysql_exec(request):
 #         return render(request, 'mysql_exec.html', {'form': form,'objlist':obj_list})
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_inception', login_url='/')
+@permission_required('myapp.can_see_mysql_menu_inception', login_url='/')
 def inception(request):
     objlist = func.get_mysql_hostlist(request.user.username,'incept')
     if request.method == 'POST':
@@ -648,7 +649,7 @@ def get_single_rollback(request):
     return HttpResponse(json.dumps(sqllist), content_type='application/json')
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_taskview', login_url='/')
+@permission_required('myapp.can_see_task_menu_task_manager', login_url='/')
 def task_manager(request):
     #obj_list = func.get_mysql_hostlist(request.user.username,'log')
     obj_list = ['all'] + func.get_mysql_hostlist(request.user.username,'incept')
@@ -856,6 +857,7 @@ def update_task(request):
 
 
 @login_required(login_url='/accounts/login/')
+@permission_required('myapp.can_see_privilges_menu_pre_query', login_url='/')
 def pre_query(request):
     if request.user.has_perm('myapp.can_query_pri') or request.user.has_perm('myapp.can_set_pri') :
         objlist = func.get_mysql_hostlist(request.user.username,'log')
@@ -912,7 +914,7 @@ def pre_query(request):
         return HttpResponseRedirect("/")
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_set_pri', login_url='/')
+@permission_required('myapp.can_see_privilges_menu_pre_set', login_url='/')
 def pre_set(request):
     userlist,grouplist = func.get_UserAndGroup()
     usergroup=func.get_usergp_list()
@@ -1033,7 +1035,7 @@ def user_detail_set(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_set_pri', login_url='/')
+@permission_required('myapp.can_see_privilges_menu_set_dbgroup', login_url='/')
 def set_dbgroup(request):
     public_user = func.public_user
     dbgrouplist,userlist,dbnamelist = pri.get_full()
@@ -1089,7 +1091,7 @@ def set_dbgroup(request):
         return render(request,'previliges/db_group.html',locals())
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_set_pri', login_url='/')
+@permission_required('myapp.can_see_privilges_menu_set_ugroup', login_url='/')
 def set_ugroup(request):
     public_user = func.public_user
     grouplist, perlist,userlist = pri.get_full_per()
@@ -1145,7 +1147,7 @@ def set_ugroup(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_set_pri', login_url='/')
+@permission_required('myapp.can_see_privilges_menu_set_dbname', login_url='/')
 def set_dbname(request):
     dblist,inslist,userlist = pri.get_fulldbname()
     acc_userlist = User.objects.all().order_by('username')
@@ -1320,7 +1322,7 @@ def fast_dbset(request):
 
 #table structure
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_metadata', login_url='/')
+@permission_required('myapp.can_see_mysql_menu_meta_data', login_url='/')
 def meta_data(request):
     try:
         favword = request.COOKIES['myfavword']
@@ -1470,7 +1472,7 @@ def dupkey_check(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_mysqladmin', login_url='/')
+@permission_required('myapp.can_see_dbmgr_menu_binlog_parse', login_url='/')
 def mysql_binlog_parse(request):
     inslist = Db_instance.objects.filter(db_type='mysql').order_by("ip")
     if request.method == 'POST':
@@ -1549,7 +1551,7 @@ def get_tblist(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_set_blist', login_url='/')
+@permission_required('myapp.can_see_privilges_menu_set_blist', login_url='/')
 def set_blist(request):
     userlist = func.get_UserList()
     objlist = func.get_mysql_hostlist(request.user.username, 'meta')
@@ -1584,7 +1586,7 @@ def set_blist(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_metadata', login_url='/')
+@permission_required('myapp.can_see_mysql_menu_diff', login_url='/')
 def diff(request):
     objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
@@ -1602,6 +1604,7 @@ def diff(request):
     return render(request,'diff.html', locals())
 
 @login_required(login_url='/accounts/login/')
+@permission_required('myapp.can_see_mysql_menu_mysql_diff', login_url='/')
 def mysql_diff(request):
     objlist0 = func.get_mysql_hostlist(request.user.username, 'meta')
     objlist1 = objlist0
@@ -1688,7 +1691,7 @@ def script_check(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_pro_mgr_view', login_url='/')
+@permission_required('myapp.can_see_scripts_menu_script_project_mgr', login_url='/')
 def script_project_mgr(request):
     #objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
@@ -1761,13 +1764,32 @@ def script_project_mgr(request):
             datalist = func.get_pro_data_byid(id)
             proname_searched = datalist[0].proname
             return render(request, 'script_project_mgr.html', {"datalist":datalist,"proname_searched":proname_searched,"info":result_msg})
+        # elif request.POST.has_key('download_script'):
+        #     if request.method == 'POST':
+        #         script_dir = func.return_dbscriptdir()
+        #         filename = request.POST['download_script']
+        #         file = open(script_dir + '/' + filename, 'rb')
+        #         response = FileResponse(file)
+        #         response['Content-Type'] = 'application/octet-stream'
+        #         response['Content-Disposition'] = 'attachment;filename="' + filename + '"'
+        #         return response
         else:
             return render(request, 'script_project_mgr.html', locals())
     else:
         form = Scriptpromgr()
     return render(request,'script_project_mgr.html', locals())
-
-
+@login_required(login_url='/accounts/login/')
+@permission_required('myapp.can_see_scripts_menu_script_project_mgr', login_url='/')
+def script_project_mgr_download(request):
+    if request.method == 'GET':
+        filename = request.GET.get('filename')
+        script_dir=func.return_dbscriptdir()
+        #filename='pro20190108001_time20190116091958.sql'
+        file = open(script_dir+'/'+filename, 'rb')
+        response = FileResponse(file)
+        response['Content-Type'] = 'application/octet-stream'
+        response['Content-Disposition'] = 'attachment;filename="'+filename+'"'
+        return response
 #interface for demo
 #resp = pool.request('POST', '/polls/', fields={'key1':'value1', 'key2':'value2'}, headers={'Content-Type':'application/json'}, encode_multipart=False)
 #http://192.168.188.211:8000/trans_script_api/ -H Content-Type: application/json -d '{ "from":"fintech_pre", "dest":"fintech_pro" }
@@ -1776,7 +1798,7 @@ def script_project_mgr(request):
 def trans_script_api(request):
     if request.method == 'POST':
         return JsonResponse({"result": 0, "msg": "trans success" + "1" + "," + "1"})
-        # json_data = json.loads(request.body)
+        #json_data = json.loads(request.body)
         # try:
         #     str_from = json_data["from"]
         #     str_dest = json_data["dest"]
@@ -1790,16 +1812,18 @@ def trans_script_api(request):
 
 
 @login_required(login_url='/accounts/login/')
+@permission_required('myapp.can_see_scripts_menu_script_upload', login_url='/')
 def script_upload_mgr(request):
     #objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
     # print result
     # prolist=func.get_pro_list()
     prolist = func.get_pro_list_unfinish()
-    objlist = func.get_mysql_hostlist(request.user.username, 'incept')
+    objlist = func.get_mysql_oracle_hostlist(request.user.username, 'incept')
     choosed_pro=0
     sqlmemo=""
     detail_id="";
+    
     if request.method == 'POST':
         if len(request.path.replace("/script_upload/","").replace("/","").strip())>0:
             prolist = func.get_pro_list_unfinish()
@@ -1807,13 +1831,16 @@ def script_upload_mgr(request):
         dbhost=request.POST['dbhost']
         detail_id=request.POST['modify_vau']
         choosed_host = dbhost
-        sqlmemo = request.POST['sqlmemo'][0:50]
+        sqlmemo = request.POST['sqlmemo'][0:100]
         user = request.user.username
         if len(sqlmemo)==0:
             form = AddForm(request.POST)
             return render(request, 'script_upload.html',
                       {'prolist': prolist, "choosed_pro": choosed_pro, "form": form, "objlist": objlist,"choosed_host":choosed_host,
                        "sqlmemo_val": sqlmemo,"status":"PLEASE INPUT SQL MEMO"})
+        db_type_record = func.get_dbtype_bydbtag(choosed_host)
+        dbtype_flag = str(db_type_record[0][0])
+        dbname_flag = str(db_type_record[0][1])
         if request.POST.has_key('check'):
             form = AddForm(request.POST)
             upform = Uploadform()
@@ -1824,22 +1851,31 @@ def script_upload_mgr(request):
                 # get valid statement
                 try:
                     tmpsqltext = ''
-                    for i in sqlfilter.get_sql_detail(sqlfilter.sql_init_filter(a), 2):
-                        tmpsqltext = tmpsqltext + i
-                    a = tmpsqltext
+                    if dbtype_flag=='mysql':
+                        for i in sqlfilter.get_sql_detail(sqlfilter.sql_init_filter(a), 2):
+                            tmpsqltext = tmpsqltext + i
+                        a = tmpsqltext
+                    elif dbtype_flag=='Oracle':
+                        a=a
                     form = AddForm(initial={'a': a})
                 except Exception, e:
                     pass
-
-                data_mysql, collist, dbname = incept.inception_check(choosed_host, a, 2)
-                # check the nee to split sqltext first
-
+                if dbtype_flag == 'mysql':
+                    data_mysql, collist, dbname = incept.inception_check(choosed_host, a, 2)
+                    # check the nee to split sqltext first
+                elif dbtype_flag == 'Oracle':
+                    data_mysql=((1L, a, 0L),)
+                    collist=['ID', 'sql_statement', 'ddlflag']
+                    dbname=dbname_flag
                 if len(data_mysql) > 1:
                     split = 1
                     return render(request, 'script_upload.html',
                                   {'prolist': prolist, "choosed_pro": int(choosed_pro), "form": form,"objlist":objlist,"data_list":data_mysql,"collist":collist,"split":split,"sqlmemo_val":sqlmemo,"choosed_host":choosed_host})
                 else:
-                    data_mysql, collist, dbname = incept.inception_check(choosed_host, a)
+                    if dbtype_flag == 'mysql':
+                        data_mysql, collist, dbname = incept.inception_check(choosed_host, a)
+                    elif dbtype_flag == 'Oracle':
+                        data_mysql, collist, dbname = incept.oracle_sqlcheck(a, dbname_flag)
                     return render(request, 'script_upload.html',
                                   {'prolist': prolist, "choosed_pro": int(choosed_pro), "form": form,"objlist":objlist,"data_list":data_mysql,"collist":collist,"sqlmemo_val":sqlmemo,"choosed_host":choosed_host})
 
@@ -1854,13 +1890,23 @@ def script_upload_mgr(request):
                 # get valid statement
                 try:
                     tmpsqltext = ''
-                    for i in sqlfilter.get_sql_detail(sqlfilter.sql_init_filter(sqltext), 2):
-                        tmpsqltext = tmpsqltext + i
-                    sqltext = tmpsqltext
+                    if dbtype_flag=='mysql':
+                        for i in sqlfilter.get_sql_detail(sqlfilter.sql_init_filter(sqltext), 2):
+                            tmpsqltext = tmpsqltext + i
+                        sqltext = tmpsqltext
+                    elif dbtype_flag=='Oracle':
+                        sqltext=sqltext
                     form = AddForm(initial={'a': sqltext})
                 except Exception, e:
                     pass
-                data_mysql, tmp_col, dbname = incept.inception_check(choosed_host, sqltext, 2)
+                if dbtype_flag == 'mysql':
+                    data_mysql, collist, dbname = incept.inception_check(choosed_host, sqltext, 2)
+                    # check the nee to split sqltext first
+                elif dbtype_flag == 'Oracle':
+                    data_mysql=((1L, sqltext, 0L),)
+                    collist=['ID', 'sql_statement', 'ddlflag']
+                    dbname=dbname_flag
+                #data_mysql, tmp_col, dbname = incept.inception_check(choosed_host, sqltext, 2)
                 # check if the sqltext need to be splited before uploaded
                 if len(data_mysql) > 1:
                     split = 1
@@ -1869,7 +1915,11 @@ def script_upload_mgr(request):
                                   {'prolist': prolist, "choosed_pro": int(choosed_pro), "form": form, "objlist": objlist,"status":status,"split":split,"sqlmemo_val":sqlmemo,"choosed_host":choosed_host})
                 # check sqltext before uploaded
                 else:
-                    tmp_data, tmp_col, dbname = incept.inception_check(choosed_host, sqltext)
+                    if dbtype_flag == 'mysql':
+                        tmp_data, tmp_col, dbname = incept.inception_check(choosed_host, sqltext)
+                    elif dbtype_flag == 'Oracle':
+                        tmp_data, tmp_col, dbname = incept.oracle_sqlcheck(sqltext, dbname_flag)
+                    # tmp_data, tmp_col, dbname = incept.inception_check(choosed_host, sqltext)
                     for i in tmp_data:
                         if int(i[2]) != 0:
                             status = 'UPLOAD SCRIPT FAIL,CHECK NOT PASSED'
@@ -1917,9 +1967,10 @@ def script_upload_mgr(request):
 
 
 @login_required(login_url='/accounts/login/')
+@permission_required('myapp.can_see_scripts_menu_script_check_mgr', login_url='/')
 def script_check_mgr(request):
     prolist=func.get_pro_list_unfinish()
-    objlist = func.get_mysql_hostlist(request.user.username, 'incept')
+    objlist = func.get_mysql_oracle_hostlist(request.user.username, 'incept')
     choosed_pro=0
     choosed_host=""
     if request.method == 'POST':
@@ -1964,7 +2015,7 @@ def script_check_mgr(request):
                        "choosed_host": choosed_host})
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_inception_dml', login_url='/')
+@permission_required('myapp.can_see_mysql_menu_inception_dml', login_url='/')
 def inception_dml(request):
     #objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
@@ -2068,10 +2119,10 @@ def inception_dml(request):
         return render(request, 'inception_dml.html', locals())
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_script_task_mgr', login_url='/')
+@permission_required('myapp.can_see_scripts_menu_script_task_mgr', login_url='/')
 def script_task_mgr(request):
     prolist=func.get_pro_list_unfinish()
-    objlist = func.get_mysql_hostlist(request.user.username, 'incept')
+    objlist = func.get_mysql_oracle_hostlist(request.user.username, 'incept')
     objlist_trans = objlist
     choosed_pro=0
     choosed_host=""
@@ -2137,10 +2188,10 @@ def script_task_mgr(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_script_task_mgr_db', login_url='/')
+@permission_required('myapp.can_see_scripts_menu_script_task_mgr_db', login_url='/')
 def script_task_mgr_db(request):
     prolist=func.get_pro_list_unfinish()
-    objlist = func.get_mysql_hostlist(request.user.username, 'incept')
+    objlist = func.get_mysql_oracle_hostlist(request.user.username, 'incept')
     objlist_trans = objlist
     choosed_pro=0
     choosed_host=""
@@ -2187,7 +2238,7 @@ def script_task_mgr_db(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_mon_mysql_mgr', login_url='/')
+@permission_required('myapp.can_see_dbmgr_menu_mon_mysql_mgr', login_url='/')
 def mon_mysql_mgr(request):
     #objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')
@@ -2256,7 +2307,7 @@ def mon_mysql_mgr(request):
 
 
 @login_required(login_url='/accounts/login/')
-@permission_required('myapp.can_see_mysql_dashbord', login_url='/')
+@permission_required('myapp.can_see_dbmgr_menu_mysql_dashbord', login_url='/')
 def mysql_dashbord(request):
     #objlist = func.get_mysql_hostlist(request.user.username, 'meta')
     # result = func.get_diff('mysql-lepus-test','mysql_replication','mysql-lepus','mysql_replication')

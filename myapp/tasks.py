@@ -9,12 +9,21 @@ from django.template import loader
 from myapp.include.encrypt import prpcrypt
 from mypro.settings import EMAIL_SENDER
 from myapp.include import function as func
+from oracle.oracle_fun import incept_oracle_run
 
 @task
 def process_runtask(hosttag,sqltext,mytask):
     flag = (1 if mytask.backup_status == 1 else 3)
-    results,col,tar_dbname = incept.inception_check(hosttag,sqltext,flag)
+    # db_type_record = func.get_dbtype_bydbtag(hosttag)
+    # dbtype_flag = str(db_type_record[0][0])
+    results, col, tar_dbname = incept.inception_check(hosttag, sqltext, flag)
     incept.make_sure_mysql_usable()
+    # if dbtype_flag == 'mysql':
+    #     results, col, tar_dbname = incept.inception_check(hosttag, sqltext, flag)
+    #     incept.make_sure_mysql_usable()
+    # elif dbtype_flag == 'Oracle':
+    #     results, col, tar_dbname = incept_oracle_run(hosttag,sqltext,useraccount,ipaddr)
+        #incept.make_sure_mysql_usable()
     status='executed'
     c_time = mytask.create_time
     mytask.update_time = datetime.datetime.now()
@@ -39,6 +48,46 @@ def process_runtask(hosttag,sqltext,mytask):
     mytask.status = status
     mytask.save()
     # sendmail_task.delay(mytask)
+
+@task
+def process_runtask_oracle(hosttag,sqltext,mytask,useraccount,ipaddr):
+    flag = (1 if mytask.backup_status == 1 else 3)
+    # db_type_record = func.get_dbtype_bydbtag(hosttag)
+    # dbtype_flag = str(db_type_record[0][0])
+    # if dbtype_flag == 'mysql':
+    #     results, col, tar_dbname = incept.inception_check(hosttag, sqltext, flag)
+    #     incept.make_sure_mysql_usable()
+    # elif dbtype_flag == 'Oracle':
+    #     results, col, tar_dbname = incept_oracle_run(hosttag,sqltext,useraccount,ipaddr)
+        #incept.make_sure_mysql_usable()
+    results, col, tar_dbname = incept_oracle_run(hosttag, sqltext, useraccount, ipaddr)
+    status='executed'
+    c_time = mytask.create_time
+    mytask.update_time = datetime.datetime.now()
+    if flag == 1:
+        mytask.backup_status=2
+    mytask.save()
+    for row in results:
+        try:
+            inclog = Incep_error_log(myid=row[0],stage=row[1],errlevel=row[2],stagestatus=row[3],errormessage=row[4],\
+                         sqltext=row[5],affectrow=row[6],sequence=row[7],backup_db=row[8],execute_time=row[9],sqlsha=row[10],\
+                         create_time=c_time,finish_time=mytask.update_time)
+            inclog.save()
+            #if some error occured in inception_check stage
+        except Exception,e:
+            inclog = Incep_error_log(myid=999,stage='',errlevel=999,stagestatus='',errormessage=row[0],\
+                         sqltext=e,affectrow=999,sequence='',backup_db='',execute_time='',sqlsha='',\
+                         create_time=c_time,finish_time=mytask.update_time)
+            inclog.save()
+        if (int(row[2])!=0):
+            status='executed failed'
+            #record error message of incept exec
+    # if col!="error":
+    #     status = 'executed failed'
+    mytask.status = status
+    mytask.save()
+    # sendmail_task.delay(mytask)
+
 
 @task
 def parse_binlog(insname,binname,begintime,tbname,dbselected,username,countnum,flash_back):
@@ -157,7 +206,18 @@ def task_run(idnum,request):
         task.operator  = request.user.username
         task.update_time = datetime.datetime.now()
         task.save()
-        process_runtask.delay(hosttag,sql,task)
+        db_type_record = func.get_dbtype_bydbtag(hosttag)
+        dbtype_flag = str(db_type_record[0][0])
+        if dbtype_flag == 'mysql':
+            process_runtask.delay(hosttag, sql, task)
+            #process_runtask(hosttag, sql, task)
+        elif dbtype_flag == 'Oracle':
+            useraccount = request.user.username
+            ipaddr = func.get_client_ip(request)
+            process_runtask_oracle.delay(hosttag, sql, task, useraccount, ipaddr)
+            #process_runtask_oracle(hosttag, sql, task, useraccount, ipaddr)
+            #delayoracle
+            #process_runtask_oracle(hosttag, sql, task, useraccount, ipaddr)
         return ''
     elif task.status=='NULL':
         return 'PLEASE CHECK THE SQL FIRST'

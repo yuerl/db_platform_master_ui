@@ -141,7 +141,9 @@
                                 <button type="submit" name='delete_pro' onclick="return confirm('PLEASE COMFIRM')"
                                         class="bk-margin-5 btn btn-danger">删除
                                 </button>
-                                <span style="color:red">{{ info }}</span>
+                                <a href="{% url 'script_project_mgr_download' %}?filename={{ info }}"><span style="color:red">{{ info }}</span></a>
+{#                                <button type="submit" name='download_script' class="bk-margin-5 btn btn-link" style="height: 15px"#}
+{#                                                            value={{ info }}><span style="color:red">{{ info }}</span></button>#}
                             </div>
                         </div>
                     </div>

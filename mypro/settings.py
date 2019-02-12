@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for mypro project.
 
@@ -13,7 +14,7 @@ import os
 import djcelery
 from kombu import Queue,Exchange
 djcelery.setup_loader()
-BROKER_URL = 'redis://192.168.188.211:6379/0'
+BROKER_URL = 'redis://10.0.10.156:6379/0'
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 CELERY_IMPORTS = ("myapp.tasks","myapp.include.scheduled","myapp.include.mon")
 CELERY_QUEUES = (
@@ -46,7 +47,7 @@ SECRET_KEY = 'f+3(9rok*aj*2a$^k3cn3bm^k4-!)8emv%qbuva(9yb^u&51kv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-# DEBUG = False
+#DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -65,6 +66,7 @@ INSTALLED_APPS = [
     'salt',
     'mongodb',
     'redisdb',
+    'oracle',
     'datatemplate',
     'chartapi',
     'monitor',
@@ -129,10 +131,10 @@ WSGI_APPLICATION = 'mypro.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django',
+        'NAME': 'django_nojira',
         'USER': 'django',
         'PASSWORD': 'django',
-        'HOST': '192.168.188.211',
+        'HOST': '10.0.10.156',
         'PORT': '3306',
     }
 }
@@ -165,7 +167,8 @@ USE_I18N = True
 
 USE_L10N = False
 
-USE_TZ = True
+#USE_TZ = True 时区问题
+USE_TZ = False
 #session
 SESSION_COOKIE_AGE = 3600
 SESSION_EXPIRE_AT_BROWSER_CLOSE  = True
@@ -189,7 +192,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
 os.path.join(BASE_DIR, "static"),
 )
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\','/')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static').replace('\\','/')
 #MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\','/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
@@ -200,7 +203,7 @@ EMAIL_HOST_PASSWORD='xxxxxx'
 EMAIL_PORT = 25
 EMAIL_SENDER = 'xxxxxx@xxxxxx.com'
 # EMAIL_USE_TLS = True
-URL_FOR_PASSWD = 'http://192.168.70.128:8000'
+URL_FOR_PASSWD = 'http://172.18.100.123:8000'
 
 # SaltStack API
 SALT_API_URL = 'http://10.x.xx.xx:xx'

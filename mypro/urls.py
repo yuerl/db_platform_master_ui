@@ -52,6 +52,7 @@ urlpatterns = (
     url(r'^salt/', include('salt.urls')),
     url(r'^mongodb/', include('mongodb.urls')),
     url(r'^redisdb/', include('redisdb.urls')),
+    url(r'^oracle/', include('oracle.urls')),
     url(r'^datatemplate/', include('datatemplate.urls')),
     url(r'^chartapi/', include('chartapi.urls')),
     url(r'^monitor/', include('monitor.urls')),
@@ -59,6 +60,7 @@ urlpatterns = (
     url(r'^passforget/', include('passforget.urls')),
     url(r'^blacklist/', include('blacklist.urls')),
     url(r'^script_project_mgr/',  myapp_view.script_project_mgr,name='script_project_mgr'),
+    url(r'^script_project_mgr_download/$', myapp_view.script_project_mgr_download, name='script_project_mgr_download'),
     url(r'^script_upload/',  myapp_view.script_upload_mgr,name='script_upload'),
     url(r'^script_upload/(?P<id>\d+)/$',  myapp_view.script_upload_mgr,name='script_upload_modify'),
     # interface for demo
@@ -75,5 +77,7 @@ urlpatterns = (
     url(r'^mysql_dashbord/',  myapp_view.mysql_dashbord,name='mysql_dashbord'),
 
     url(r'^site_media/(?P<path>.*)$', 'django.views.static.serve',{'document_root': settings.MEDIA_ROOT}),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+
 )
 handler404 = myapp_view.page_not_found

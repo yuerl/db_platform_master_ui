@@ -194,6 +194,135 @@ def get_sqldml_detail(sqllist,flag):
     return sqllist
 
 
+def get_oracle_sqldml_detail(sqllist,flag):
+
+    query_type = ['desc','describe','show','select','explain']
+    dml_type = ['insert', 'update', 'delete']
+    if flag == 1:
+        list_type = query_type
+    elif flag ==2:
+        list_type = dml_type
+    typelist = []
+    i = 0
+    while i <= (0 if len(sqllist) == 0 else len(sqllist) - 1):
+        try:
+            mylist = sqllist[i].split()
+            mylen = len(mylist)
+            type = mylist[0].lower()
+            if len(type)> 1:
+                if type in list_type:
+                    myflag=0
+                    # if type == 'use' and mylist[1].lower().split(';')[0] in ['mysql']:
+                    #     print mylist[1]
+                    #     print 'fuck'
+                    #     sqllist.pop(i)
+                    #     continue
+
+                    if type == 'create' or type == 'drop' or type == 'alter':
+                        # filter create ,alter or drop database,user
+                        if mylist[1].lower() in ['database','schema','user']:
+                            sqllist.pop(i)
+                            continue
+                        #filter ddl for mysql.* table
+                        elif mylist[1].lower() =='table':
+                            if mylist[2].lower().split('.')[0].lower() in ['mysql','`mysql`']:
+                                sqllist.pop(i)
+                                continue
+                        elif mylist[1].lower() in ['temporary','ignore']:
+                            if  mylist[2].lower() =='table' and mylist[3].lower().split('.')[0].lower() in ['mysql', '`mysql`']:
+                                sqllist.pop(i)
+                                continue
+
+                    if type in ['rename', 'truncate'] and mylen >= 2:
+                        tmp_i = 1
+                        # only filter the first four is enough
+                        while tmp_i <= (2 if mylen > 2 else mylen):
+                            # print mylist[i].lower()
+                            if mylist[tmp_i].lower() in ['table']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                # print mylist[tmp_i].lower()
+                                if mylist[tmp_i].lower().split('.')[0].lower() in ['mysql', '`mysql`']:
+                                    myflag = 1
+                                break
+                            tmp_i = tmp_i + 1
+                    if myflag == 1:
+                        sqllist.pop(i)
+                        continue
+
+
+
+                    #filter dml for mysql.* table
+                    if type in ['insert','replace'] and mylen >= 2:
+                        tmp_i = 1
+                        #only filter the first four is enough
+                        while tmp_i <=(4 if mylen>4 else mylen):
+                            # print mylist[i].lower()
+                            if mylist[tmp_i].lower() in ['low_priority','delayed','high_priority','ignore','into']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                if mylist[tmp_i].lower().split('.')[0].lower() in ['mysql','`mysql`']:
+                                    myflag=1
+                                break
+                            tmp_i=tmp_i+1
+                    if myflag==1:
+                        sqllist.pop(i)
+                        continue
+
+
+                    if type in ['delete'] and mylen >= 2:
+                        tmp_i = 1
+                        #only filter the first four is enough
+                        while tmp_i <=(4 if mylen>4 else mylen):
+                            # print mylist[tmp_i].lower()
+                            if mylist[tmp_i].lower() in ['low_priority','quick','from','ignore']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                if mylist[tmp_i].lower().split('.')[0].lower() in ['mysql','`mysql`']:
+                                    myflag=1
+                                break
+                            tmp_i=tmp_i+1
+
+                    if myflag==1:
+                        sqllist.pop(i)
+                        continue
+
+                    if type in ['update'] and mylen >= 2:
+                        tmp_i = 1
+                        #only filter the first four is enough
+                        while tmp_i <=(3 if mylen>3 else mylen):
+                            # print mylist[i].lower()
+                            if mylist[tmp_i].lower() in ['low_priority','ignore']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                for up in mylist[tmp_i].lower().split(','):
+                                    # print up
+                                    if up.split('.')[0].lower() in ['mysql','`mysql`']:
+                                        myflag=1
+                                        break
+                            if myflag == 1:
+                                break
+                            tmp_i=tmp_i+1
+                    if myflag==1:
+                        sqllist.pop(i)
+                        continue
+
+                    typelist.append(type)
+                    i = i + 1
+                else:
+                    sqllist.pop(i)
+            else:
+                sqllist.pop(i)
+        except:
+            #sqllist.pop(i)
+            i = i + 1
+
+    return sqllist
+
 
 def get_sql_detail(sqllist,flag):
 
@@ -323,6 +452,145 @@ def get_sql_detail(sqllist,flag):
             i = i + 1
 
     return sqllist
+
+def get_oracle_sql_detail(sqllist,flag):
+
+    query_type = ['desc','describe','show','select','explain']
+    dml_type = ['insert', 'update', 'delete', 'create', 'alter','rename', 'drop', 'truncate','comment']
+    if flag == 1:
+        list_type = query_type
+    elif flag ==2:
+        list_type = dml_type
+    typelist = []
+    i = 0
+    while i <= (0 if len(sqllist) == 0 else len(sqllist) - 1):
+        try:
+            mylist = sqllist[i].split()
+            mylen = len(mylist)
+            type = mylist[0].lower()
+            if len(type)> 1:
+                if type in list_type:
+                    myflag=0
+                    # if type == 'use' and mylist[1].lower().split(';')[0] in ['mysql']:
+                    #     print mylist[1]
+                    #     print 'fuck'
+                    #     sqllist.pop(i)
+                    #     continue
+
+                    if type == 'create' or type == 'drop' or type == 'alter':
+                        # filter create ,alter or drop database,user
+                        if mylist[1].lower() in ['database','schema','user']:
+                            sqllist.pop(i)
+                            continue
+                        #filter ddl for mysql.* table
+                        elif mylist[1].lower() =='table':
+                            if mylist[2].lower().split('.')[0].lower() in ['mysql','`mysql`']:
+                                sqllist.pop(i)
+                                continue
+                        elif mylist[1].lower() in ['temporary','ignore']:
+                            if  mylist[2].lower() =='table' and mylist[3].lower().split('.')[0].lower() in ['mysql', '`mysql`']:
+                                sqllist.pop(i)
+                                continue
+
+                    if type in ['rename', 'truncate'] and mylen >= 2:
+                        tmp_i = 1
+                        # only filter the first four is enough
+                        while tmp_i <= (2 if mylen > 2 else mylen):
+                            # print mylist[i].lower()
+                            if mylist[tmp_i].lower() in ['table']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                # print mylist[tmp_i].lower()
+                                if mylist[tmp_i].lower().split('.')[0].lower() in ['mysql', '`mysql`']:
+                                    myflag = 1
+                                break
+                            tmp_i = tmp_i + 1
+                    if myflag == 1:
+                        sqllist.pop(i)
+                        continue
+
+
+
+                    #filter dml for mysql.* table
+                    if type in ['insert','replace'] and mylen >= 2:
+                        tmp_i = 1
+                        #only filter the first four is enough
+                        while tmp_i <=(4 if mylen>4 else mylen):
+                            # print mylist[i].lower()
+                            if mylist[tmp_i].lower() in ['low_priority','delayed','high_priority','ignore','into']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                if mylist[tmp_i].lower().split('.')[0].lower() in ['mysql','`mysql`']:
+                                    myflag=1
+                                break
+                            tmp_i=tmp_i+1
+                    if myflag==1:
+                        sqllist.pop(i)
+                        continue
+
+
+                    if type in ['delete'] and mylen >= 2:
+                        tmp_i = 1
+                        #only filter the first four is enough
+                        while tmp_i <=(4 if mylen>4 else mylen):
+                            # print mylist[tmp_i].lower()
+                            if mylist[tmp_i].lower() in ['low_priority','quick','from','ignore']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                if mylist[tmp_i].lower().split('.')[0].lower() in ['mysql','`mysql`']:
+                                    myflag=1
+                                break
+                            tmp_i=tmp_i+1
+
+                    if myflag==1:
+                        sqllist.pop(i)
+                        continue
+
+                    if type in ['update'] and mylen >= 2:
+                        tmp_i = 1
+                        #only filter the first four is enough
+                        while tmp_i <=(3 if mylen>3 else mylen):
+                            # print mylist[i].lower()
+                            if mylist[tmp_i].lower() in ['low_priority','ignore']:
+                                tmp_i = tmp_i + 1
+                                continue
+                            else:
+                                for up in mylist[tmp_i].lower().split(','):
+                                    # print up
+                                    if up.split('.')[0].lower() in ['mysql','`mysql`']:
+                                        myflag=1
+                                        break
+                            if myflag == 1:
+                                break
+                            tmp_i=tmp_i+1
+                    if myflag==1:
+                        sqllist.pop(i)
+                        continue
+
+                    typelist.append(type)
+                    i = i + 1
+                else:
+                    sqllist.pop(i)
+            else:
+                sqllist.pop(i)
+        except:
+            #sqllist.pop(i)
+            i = i + 1
+
+    return sqllist
+
+
+def get_sqltype(single_sql):
+    sqltype=['insert','update','delete']
+    return_sqltype=''
+    for i in range(len(sqltype)):
+        if str(single_sql).lower().startswith(sqltype[i]):
+            return_sqltype=str(sqltype[i])
+            break
+    return  return_sqltype
 #
 # def sql_init_filter(sqlfull):
 #     tmp = oldp = sql = ''

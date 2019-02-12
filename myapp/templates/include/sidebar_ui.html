@@ -24,62 +24,126 @@
                             <i class="fa fa-laptop" aria-hidden="true"></i><span>Dashboard</span>
                         </a>
                     </li>
-                    <li class="nav-parent">
+                 {% if perms.myapp.can_see_mysql_menu %}
+                     <li class="nav-parent">
                         <a>
                             <i class="fa fa-database" aria-hidden="true"></i><span>MySQL</span>
                         </a>
                         <ul class="nav nav-children">
-                            <li><a href="{% url 'meta_data' %}"><span class="text"> 表结构查询</span></a></li>
-                            <li><a href="{% url 'mysql_diff' %}"><span class="text"> 数据库比对</span></a></li>
-                            <li><a href="{% url 'diff' %}"><span class="text"> 表结构比对</span></a></li>
-                            <li><a href="{% url 'mysql_query' %}"><span class="text"> MySQL_SELECT执行</span></a></li>
-                            <li><a href="{% url 'inception_dml' %}"><span class="text">DML执行(自动备份)</span></a></li>
-                            <li><a href="{% url 'inception' %}"><span class="text"> DML&DDL执行(权限审核)</span></a></li>
-                            <li><a href="{% url 'mysql_exec' %}"><span class="text">MySQL_EXEC(直接执行)</span></a></li>
+                             {% if perms.myapp.can_see_mysql_menu_meta_data %}
+                                 <li><a href="{% url 'meta_data' %}"><span class="text"> 表结构查询</span></a></li>
+                             {% endif %}
+                            {% if perms.myapp.can_see_mysql_menu_mysql_diff %}
+                                <li><a href="{% url 'mysql_diff' %}"><span class="text"> 数据库比对</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_mysql_menu_diff %}
+                                   <li><a href="{% url 'diff' %}"><span class="text"> 表结构比对</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_mysql_menu_mysql_query %}
+                                  <li><a href="{% url 'mysql_query' %}"><span class="text"> MySQL_SELECT执行</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_mysql_menu_inception_dml %}
+                                 <li><a href="{% url 'inception_dml' %}"><span class="text">DML执行(自动备份)</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_mysql_menu_inception %}
+                                 <li><a href="{% url 'inception' %}"><span class="text"> DML&DDL执行(权限审核)</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_mysql_menu_mysql_exec %}
+                                <li><a href="{% url 'mysql_exec' %}"><span class="text">MySQL_EXEC(直接执行)</span></a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                 {% endif %}
+                 {% if perms.myapp.can_see_oracle_menu %}
+                      <li class="nav-parent">
+                        <a>
+                            <i class="fa fa-sun-o" aria-hidden="true"></i><span>Oracle</span>
+                        </a>
+                        <ul class="nav nav-children">
+{#                            <li><a href="{% url 'oracle_query' %}"><span class="text"> 表结构查询</span></a></li>#}
+{#                            <li><a href="{% url 'mysql_diff' %}"><span class="text"> 数据库比对</span></a></li>#}
+{#                            <li><a href="{% url 'diff' %}"><span class="text"> 表结构比对</span></a></li>#}
+                            {% if perms.myapp.can_see_oracle_menu_oracle_query %}
+                            <li><a href="{% url 'oracle_query' %}"><span class="text"> ORACLE_SELECT执行</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_oracle_menu_inception_dml %}
+                            <li><a href="{% url 'oracle_inception_dml' %}"><span class="text">DML执行(自动备份)</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_oracle_menu_inception_ddldml %}
+                            <li><a href="{% url 'oracle_inception_ddldml' %}"><span class="text"> DML&DDL执行(权限审核)</span></a></li>
+                            {% endif %}
+                              {% if perms.myapp.can_see_oracle_menu_oracle_exec %}
+                            <li><a href="{% url 'oracle_exec' %}"><span class="text">ORACLE_EXEC(直接执行)</span></a></li>
+                              {% endif %}
 
                         </ul>
                     </li>
-                 <li class="nav-parent">
+                 {% endif %}
+                 {% if perms.myapp.can_see_mongodb_menu %}
+                      <li class="nav-parent">
                         <a>
                             <i class="fa fa-dedent" aria-hidden="true"></i><span>MongoDB</span>
                         </a>
                         <ul class="nav nav-children">
+                            {% if perms.myapp.can_see_mongodb_menu_mongodb_query %}
                              <li><a href="{% url 'mongodb_query' %}"><span class="text">MongoDB查询</span></a></li>
+                            {% endif %}
                         </ul>
                     </li>
-                    <li class="nav-parent">
+                 {% endif %}
+                 {% if perms.myapp.can_see_redis_menu %}
+                       <li class="nav-parent">
                         <a>
                             <i class="fa fa-reddit" aria-hidden="true"></i><span>Redis</span>
                         </a>
                         <ul class="nav nav-children">
+                            {% if perms.myapp.can_see_redis_menu_redis_query %}
                              <li><a href="{% url 'redis_query' %}"><span class="text">Redis查询</span></a></li>
+                             {% endif %}
 {#                             <li><a href="{% url 'redis_command' %}"><span class="text">Redis操作</span></a></li>#}
                         </ul>
                     </li>
-{#                    <li class="nav-parent">#}
-{#                        <a>#}
-{#                            <i class="fa fa-check" aria-hidden="true"></i><span>数据模板</span>#}
-{#                        </a>#}
-{#                        <ul class="nav nav-children">#}
-{#                            <li><a href="{% url 'template_mgr' %}"><span class="text"> 模板管理</span></a></li>#}
-{#                            <li><a href="{% url 'template_dmldata' %}"><span class="text">数据处理</span></a></li>#}
-{#                            <li><a href="{% url 'mysql_query' %}"><span class="text">数据任务管理</span></a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
-                    <li class="nav-parent">
+                 {% endif %}
+                 {% if perms.myapp.can_see_scripts_menu %}
+                        <li class="nav-parent">
                         <a>
                             <i class="fa fa-list-alt" aria-hidden="true"></i><span>脚本管理</span>
                         </a>
                         <ul class="nav nav-children">
-                            <li><a href="{% url 'script_project_mgr' %}"><span class="text"> 项目管理</span></a></li>
-                            <li><a href="{% url 'script_upload' %}"><span class="text"> 脚本检测提交</span></a></li>
-                            <li><a href="{% url 'script_check_mgr' %}"><span class="text"> 脚本修改</span></a></li>
-                            <li><a href="{% url 'script_task_mgr' %}"><span class="text">脚本执行管理</span></a></li>
-                            <li><a href="{% url 'script_task_mgr_db' %}"><span class="text">DB脚本库同步</span></a></li>
+                            {% if perms.myapp.can_see_scripts_menu_script_project_mgr %}
+                                 <li><a href="{% url 'script_project_mgr' %}"><span class="text"> 项目管理</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_scripts_menu_script_upload %}
+                                <li><a href="{% url 'script_upload' %}"><span class="text"> 脚本检测提交</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_scripts_menu_script_check_mgr %}
+                                <li><a href="{% url 'script_check_mgr' %}"><span class="text"> 脚本修改</span></a></li>
+                            {% endif %}
+                             {% if perms.myapp.can_see_scripts_menu_script_task_mgr %}
+                                  <li><a href="{% url 'script_task_mgr' %}"><span class="text">脚本执行管理</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_scripts_menu_script_task_mgr_db %}
+                                <li><a href="{% url 'script_task_mgr_db' %}"><span class="text">DB脚本库同步</span></a></li>
+                            {% endif %}
+
                         </ul>
                     </li>
+                 {% endif %}
+                 {% if perms.myapp.can_see_task_menu %}
 
-                    <li class="nav-parent">
+                          <li>
+                          {% if perms.myapp.can_see_task_menu_task_manager %}
+                        <a href="{% url 'task_manager' %}">
+
+                            <i class="fa fa-tasks" aria-hidden="true"></i><span>任务管理</span>
+                        </a>
+                              {% endif %}
+                    </li>
+
+
+                 {% endif %}
+                 {% if perms.myapp.can_see_dbmgr_menu %}
+                         <li class="nav-parent">
                         <a>
                             <i class="fa fa-random" aria-hidden="true"></i><span>DB管理</span>
                         </a>
@@ -90,55 +154,79 @@
                             {#                                            <li><a href="{% url 'dupkey_check' %}"><span class="text">重复索引检查</span></a></li>#}
 
                             {#                                            <li><a href="{% url 'mon_set' %}"><span class="text">MySQL监控</span></a></li>#}
-                            <li><a href="{% url 'mon_mysql_mgr' %}"><span class="text">MySQL监控主机维护</span></a></li>
-                            <li><a href="{% url 'binlog_parse' %}"><span class="text">BINLOG解析</span></a></li>
-                            <li><a href="{% url 'log_query' %}"><span class="text"></span><span>日志查询</span></a></li>
-                            <li><a href="{% url 'mysql_dashbord' %}"><span class="text">MySQL Dashboard</span></a></li>
-
+                            {% if perms.myapp.can_see_dbmgr_menu_mon_mysql_mgr %}
+                                <li><a href="{% url 'mon_mysql_mgr' %}"><span class="text">MySQL监控主机维护</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_dbmgr_menu_binlog_parse %}
+                                <li><a href="{% url 'binlog_parse' %}"><span class="text">BINLOG解析</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_dbmgr_menu_log_query %}
+                                <li><a href="{% url 'log_query' %}"><span class="text"></span><span>日志查询</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_dbmgr_menu_mysql_dashbord %}
+                                <li><a href="{% url 'mysql_dashbord' %}"><span class="text">MySQL Dashboard</span></a></li>
+                            {% endif %}
                         </ul>
                     </li>
-                    <li>
-                        <a href="{% url 'task_manager' %}">
-                            <i class="fa fa-tasks" aria-hidden="true"></i><span>任务管理</span>
-                        </a>
-                    </li>
-{#                    <li><a href="{% url 'task_manager' %}"><span class="text"> 任务管理</span></a></li>#}
-
-
-{#                    <li class="nav-parent">#}
-{#                        <a>#}
-{#                            <i class="fa fa-ambulance" aria-hidden="true"></i><span>报表管理</span>#}
-{#                        </a>#}
-{#                        <ul class="nav nav-children">#}
-{#                             <li><a href="{% url 'rpt_sql' %}"><span class="text">SQL配置</span></a></li>#}
-{#                            <li><a href="{% url 'task_manager' %}"><span class="text">任务管理</span></a></li>#}
-{#                            <li><a href="{% url 'binlog_parse' %}"><span class="text">邮件配置</span></a></li>#}
-{#                            <li><a href="{% url 'mon_mysql_mgr' %}"><span class="text">日志查询</span></a></li>#}
-{#                        </ul>#}
-{#                    </li>#}
-                    <li class="nav-parent">
+                 {% endif %}
+                 {% if perms.myapp.can_see_privilges_menu %}
+                       <li class="nav-parent">
                         <a>
                             <i class="fa fa-chain" aria-hidden="true"></i>
                             <span>权限管理</span>
                         </a>
                         <ul class="nav nav-children">
-                            {% if perms.myapp.can_set_pri or perms.myapp.can_query_pri %}
-                                <li><a href="{% url 'pre_query' %}"><span class="text"> 权限查询</span></a></li>
+                            {% if perms.myapp.can_see_privilges_menu_pre_query %}
+                                 <li><a href="{% url 'pre_query' %}"><span class="text"> 权限查询</span></a></li>
                             {% endif %}
-                            {% if perms.myapp.can_set_pri %}
-                                <li><a href="{% url 'pre_set' %}"><span class="text">用户账户</span></a></li>
-                                <li><a href="{% url 'user_detail_set' %}"><span class="text">用户资料明细</span></a></li>
-
+                            {% if perms.myapp.can_see_privilges_menu_pre_set %}
+                            <li><a href="{% url 'pre_set' %}"><span class="text">用户账户</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_privilges_menu_user_detail_set %}
+                            <li><a href="{% url 'user_detail_set' %}"><span class="text">用户资料明细</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_privilges_menu_set_dbname %}
+                             <li><a href="{% url 'set_dbname' %}"><span class="text">设置DB</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_privilges_menu_set_blist %}
+                             <li><a href="{% url 'set_blist' %}"><span class="text"> 设置黑名单表</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_privilges_menu_set_ugroup %}
+                             <li><a href="{% url 'set_ugroup' %}"><span class="text"> 设置USER_GROUP</span></a></li>
+                            {% endif %}
+                            {% if perms.myapp.can_see_privilges_menu_set_dbgroup %}
+                            <li><a href="{% url 'set_dbgroup' %}"><span class="text"> 设置DB_GROUP</span></a></li>
+                            {% endif %}
                                 {#											<li><a href="{% url 'fast_dbset' %}"><span class="text">快速创建DB</span></a></li>#}
                                 {#                                            <li role="presentation" class="divider"></li>#}
-                                <li><a href="{% url 'set_dbname' %}"><span class="text">设置DB</span></a></li>
-                                <li><a href="{% url 'set_blist' %}"><span class="text"> 设置黑名单表</span></a></li>
+
+
                                 {#                                            <li role="presentation" class="divider"></li>#}
-                                <li><a href="{% url 'set_ugroup' %}"><span class="text"> 设置USER_GROUP</span></a></li>
-                                <li><a href="{% url 'set_dbgroup' %}"><span class="text"> 设置DB_GROUP</span></a></li>
-                            {% endif %}
+
                         </ul>
                     </li>
+                 {% endif %}
+
+
+{#                    <li class="nav-parent">#}
+{#                        <a>#}
+{#                            <i class="fa fa-check" aria-hidden="true"></i><span>数据模板</span>#}
+{#                        </a>#}
+{#                        <ul class="nav nav-children">#}
+{#                            <li><a href="{% url 'template_mgr' %}"><span class="text"> 模板管理</span></a></li>#}
+{#                            <li><a href="{% url 'template_dmldata' %}"><span class="text">数据处理</span></a></li>#}
+{#                            <li><a href="{% url 'mysql_query' %}"><span class="text">数据任务管理</span></a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+
+
+
+
+{#                    <li><a href="{% url 'task_manager' %}"><span class="text"> 任务管理</span></a></li>#}
+
+
+
+
                     {#									<li>#}
                     {#										<a href="widgets.html">#}
                     {#											<i class="fa fa-life-bouy" aria-hidden="true"></i><span>Widgets</span>#}

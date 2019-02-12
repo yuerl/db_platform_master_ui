@@ -215,6 +215,62 @@ class User_profile(models.Model):
                       ('can_see_mysql_dashbord', 'can_see_mysql_dashbord'),
                       ('can_see_script_task_mgr_db', 'can_see_script_task_mgr_db'),
                       ('can_see_set_blist', 'can_see_set_blist'),
+                      #mysql menu
+                      ('can_see_mysql_menu','can_see_mysql_menu'),
+                      ('can_see_mysql_menu_meta_data', 'can_see_mysql_menu_meta_data'),
+                      ('can_see_mysql_menu_mysql_diff', 'can_see_mysql_menu_mysql_diff'),
+                      ('can_see_mysql_menu_diff', 'can_see_mysql_menu_diff'),
+                      ('can_see_mysql_menu_mysql_query', 'can_see_mysql_menu_mysql_query'),
+                      ('can_see_mysql_menu_inception_dml', 'can_see_mysql_menu_inception_dml'),
+                      ('can_see_mysql_menu_inception', 'can_see_mysql_menu_inception'),
+                      ('can_see_mysql_menu_mysql_exec', 'can_see_mysql_menu_mysql_exec'),
+                      # mysql menu
+                      #oracle menu
+                      ('can_see_oracle_menu', 'can_see_oracle_menu'),
+                      ('can_see_oracle_menu_oracle_query', 'can_see_oracle_menu_oracle_query'),
+                      ('can_see_oracle_menu_inception_dml', 'can_see_oracle_menu_inception_dml'),
+                      ('can_see_oracle_menu_inception_ddldml', 'can_see_oracle_menu_inception_ddldml'),
+                      ('can_see_oracle_menu_oracle_exec', 'can_see_oracle_menu_oracle_exec'),
+                      # oracle menu
+                      #mongodb menu
+                      ('can_see_mongodb_menu', 'can_see_mongodb_menu'),
+                      ('can_see_mongodb_menu_mongodb_query', 'can_see_mongodb_menu_mongodb_query'),
+                      # mongodb menu
+                      # redis_query menu
+                      ('can_see_redis_menu', 'can_see_redis_menu'),
+                      ('can_see_redis_menu_redis_query', 'can_see_redis_menu_redis_query'),
+                      # redis_query menu
+                      # scripts menu
+                      ('can_see_scripts_menu', 'can_see_scripts_menu'),
+                      ('can_see_scripts_menu_script_project_mgr','can_see_scripts_menu_script_project_mgr'),
+                      ('can_see_scripts_menu_script_upload', 'can_see_scripts_menu_script_upload'),
+                      ('can_see_scripts_menu_script_check_mgr', 'can_see_scripts_menu_script_check_mgr'),
+                      ('can_see_scripts_menu_script_task_mgr', 'can_see_scripts_menu_script_task_mgr'),
+                      ('can_see_scripts_menu_script_task_mgr_db', 'can_see_scripts_menu_script_task_mgr_db'),
+                      # scripts menu
+                      # task menu
+                      ('can_see_task_menu', 'can_see_task_menu'),
+                      ('can_see_task_menu_task_manager', 'can_see_task_menu_task_manager'),
+                      # task menu
+                      # dbmgr menu
+                      ('can_see_dbmgr_menu', 'can_see_dbmgr_menu'),
+                      ('can_see_dbmgr_menu_mon_mysql_mgr', 'can_see_dbmgr_menu_mon_mysql_mgr'),
+                      ('can_see_dbmgr_menu_binlog_parse', 'can_see_dbmgr_menu_binlog_parse'),
+                      ('can_see_dbmgr_menu_log_query', 'can_see_dbmgr_menu_log_query'),
+                      ('can_see_dbmgr_menu_mysql_dashbord', 'can_see_dbmgr_menu_mysql_dashbord'),
+                      # dbmgr menu
+
+                      # privilges menu
+                      ('can_see_privilges_menu', 'can_see_privilges_menu'),
+                      ('can_see_privilges_menu_pre_query', 'can_see_privilges_menu_pre_query'),
+                      ('can_see_privilges_menu_pre_set', 'can_see_privilges_menu_pre_set'),
+                      ('can_see_privilges_menu_user_detail_set', 'can_see_privilges_menu_user_detail_set'),
+                      ('can_see_privilges_menu_set_dbname', 'can_see_privilges_menu_set_dbname'),
+                      ('can_see_privilges_menu_set_blist', 'can_see_privilges_menu_set_blist'),
+                      ('can_see_privilges_menu_set_ugroup', 'can_see_privilges_menu_set_ugroup'),
+                      ('can_see_privilges_menu_set_dbgroup', 'can_see_privilges_menu_set_dbgroup'),
+                      # privilges menu
+
                       )
 
 class Upload(models.Model):
